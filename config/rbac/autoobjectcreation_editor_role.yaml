@@ -1,0 +1,24 @@
+# permissions for end users to edit autoobjectcreations.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: autoobjectcreation-editor-role
+rules:
+- apiGroups:
+  - tools.aoc.github.com
+  resources:
+  - autoobjectcreations
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - tools.aoc.github.com
+  resources:
+  - autoobjectcreations/status
+  verbs:
+  - get

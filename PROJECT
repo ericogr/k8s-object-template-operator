@@ -1,3 +1,7 @@
 domain: github.com
 repo: github.com/ericogr/k8s-aoc
+resources:
+- group: tools.aoc
+  kind: AutoObjectCreation
+  version: v1
 version: "2"
