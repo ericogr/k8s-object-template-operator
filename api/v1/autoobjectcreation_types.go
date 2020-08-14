@@ -31,7 +31,7 @@ type Template struct {
 	Name       string   `json:"name"`
 	Kind       string   `json:"kind"`
 	APIVersion string   `json:"apiVersion"`
-	Metadata   Metadata `json:"metadata"`
+	Metadata   Metadata `json:"metadata,omitempty"`
 	Spec       string   `json:"spec"`
 }
 

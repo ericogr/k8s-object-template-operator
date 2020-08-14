@@ -1,7 +1,29 @@
+---
 apiVersion: tools.aoc.github.com/v1
 kind: AutoObjectCreation
 metadata:
   name: autoobjectcreation-sample
 spec:
-  # Add fields here
-  foo: bar
+  trigger:
+    annotations:
+      annotation1: value1
+      annotation2: value2
+  template:
+    name: prometheus-rule-default
+    kind: PrometheusRule
+    apiVersion: monitoring.coreos.com/v1
+    spec: |-
+      groups:
+      - name: pods
+        rules:
+        - alert: pod_not_ready
+          annotations:
+            description: 'Pod not ready : {{ $labels.pod }}'
+            summary: 'Pod not ready: {{ $labels.pod }}'
+          expr: sum by(pod) (kube_pod_status_ready{namespace="hube-app"} == 0) != 0
+          for: 10m
+          labels:
+            totvsapp_app: hube
+            totvsapp_route: slack
+            totvsapp_severity: critical
+            totvsapp_slack_channel: '#integracao-hube-alerts'

@@ -41,5 +41,6 @@ func (aoc *Processor) getStrFromTemplate(template aocv1.Template) string {
 	return `
 apiVersion: ` + template.APIVersion + `
 kind: ` + template.Kind + `
-` + template.Spec
+spec:
+  ` + template.Spec
 }
