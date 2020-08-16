@@ -21,12 +21,14 @@ import (
 
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	toolsaocv1 "github.com/ericogr/k8s-aoc/api/v1"
-	aocv1 "github.com/ericogr/k8s-aoc/pkg/aoc"
+	processor "github.com/ericogr/k8s-aoc/pkg/processor"
 )
 
 // AutoObjectCreationReconciler reconciles a AutoObjectCreation object
@@ -44,45 +46,104 @@ func (r *AutoObjectCreationReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 	ctx := context.Background()
 	log := r.Log.WithValues("autoobjectcreation", req.NamespacedName)
 	var aoc toolsaocv1.AutoObjectCreation
-
 	err := r.Get(ctx, req.NamespacedName, &aoc)
 
 	if err != nil {
-		log.Error(err, "Error when refresh AutoObjectCreation")
+		if errors.IsNotFound(err) {
+			// Object not found, return. Created objects are automatically garbage collected
+			return ctrl.Result{}, nil
+		}
+
+		// Error reading the object - requeue the request.
 		return ctrl.Result{}, err
 	}
 
 	namespaces, err := r.FindNamespacesByAnnotation(aoc.Spec.Trigger.Annotations)
 
-	var errors string
+	processor := processor.Processor{Client: r.Client}
+	var listErrors string
 	for _, namespace := range namespaces {
-		log.Info("Ready to greate [" + aoc.Kind + "(" + aoc.Name + ")] at " + namespace.ObjectMeta.Name)
+		reference := "[" + aoc.Spec.Template.Kind + "(" + aoc.Spec.Template.Name + ")] at " + namespace.ObjectMeta.Name + " namespace"
+		log.Info("Ready to process " + reference)
 
-		processor := aocv1.Processor{Client: r.Client}
-		err := processor.CreateObject(aoc.Spec.Template, namespace)
+		newObj, gvk, err := processor.ToObject(aoc.Spec.Template, namespace)
 
 		if err != nil {
-			strErr := "Error creating object [" + aoc.Kind + " (" + aoc.Name + ")] at " + namespace.ObjectMeta.Name
-			errors = errors + strErr + "\n"
+			strErr := "Error serializing " + reference
+			listErrors += strErr + "\n"
 			log.Error(err, strErr)
+			break
+		}
+
+		log.Info("Object encoded succefully " + reference)
+
+		findObj, err := processor.GetObject(
+			*gvk,
+			types.NamespacedName{
+				Namespace: namespace.Name,
+				Name:      aoc.Spec.Template.Name,
+			},
+		)
+
+		if err != nil && errors.IsNotFound(err) {
+			log.Info("Creating new object " + reference)
+			err := r.Client.Create(ctx, &newObj)
+
+			if err == nil {
+				log.Info("Create succefully " + reference)
+			} else {
+				strErr := "Error creating object " + reference
+				listErrors += strErr + "\n"
+				log.Error(err, strErr)
+			}
 		} else {
-			log.Info("Successfully created object [" + aoc.Kind + " (" + aoc.Name + ")] at " + namespace.ObjectMeta.Name)
+			if err == nil {
+				findObj.Object["spec"] = newObj.Object["spec"]
+				err := r.Client.Update(ctx, &findObj)
+
+				if err == nil {
+					log.Info("Update succefully " + reference)
+				} else {
+					strErr := "Error updating object " + reference
+					listErrors += strErr + "\n"
+					log.Error(err, strErr)
+				}
+			} else {
+				strErr := "Error getting object " + reference
+				listErrors += strErr + "\n"
+				log.Error(err, strErr)
+			}
 		}
 	}
 
-	if errors != "" {
-		aoc.Status.Status = errors
+	// //https://godoc.org/sigs.k8s.io/controller-runtime/pkg/predicate#GenerationChangedPredicate
+	if listErrors != "" {
+		aoc.Status.Status = listErrors
 	} else {
 		aoc.Status.Status = "OK"
 	}
 
-	err = r.Status().Update(ctx, &aoc)
-	if err != nil {
-		log.Error(err, "Fail to update status")
-	}
-
 	return ctrl.Result{}, nil
 }
+
+// FindObject find object
+// func (r *AutoObjectCreationReconciler) FindObject(gvk schema.GroupVersionKind, req ctrl.Request) (resource unstructured.Unstructured, err error) {
+// 	nn := types.NamespacedName{
+// 		Namespace: "default",
+// 		Name:      "prometheus-rule-default",
+// 	}
+
+// 	fmt.Println("---------------1")
+// 	resource.SetGroupVersionKind(gvk)
+// 	fmt.Println(gvk)
+// 	fmt.Println("---------------2")
+// 	err = r.Client.Get(context.Background(), nn, &resource)
+
+// 	fmt.Println(err.Error())
+// 	fmt.Println("---------------3")
+
+// 	return
+// }
 
 // SetupWithManager setup
 func (r *AutoObjectCreationReconciler) SetupWithManager(mgr ctrl.Manager) error {
