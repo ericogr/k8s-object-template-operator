@@ -21,7 +21,6 @@ import (
 	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"context"
-	"fmt"
 
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
@@ -54,8 +53,6 @@ func (r *NamespaceReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 // Reconcile namespace
 func (r *NamespaceReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	fmt.Println("NAMESPACE")
-	fmt.Println("------------------------------------------------------")
 	ctx := context.Background()
 	log := r.Log.WithValues("namespace", namespaceGV)
 	var namespace corev1.Namespace

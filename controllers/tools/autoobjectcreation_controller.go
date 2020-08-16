@@ -18,7 +18,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 
 	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -54,9 +53,6 @@ func (r *AutoObjectCreationReconciler) SetupWithManager(mgr ctrl.Manager) error 
 
 // Reconcile k8s reconcile
 func (r *AutoObjectCreationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	fmt.Println("AUTOOBJECTCREATION")
-	fmt.Println("------------------------------------------------------")
-
 	ctx := context.Background()
 	log := r.Log.WithValues("autoobjectcreation", aocGV)
 	var aoc toolsaocv1.AutoObjectCreation
