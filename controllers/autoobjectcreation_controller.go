@@ -126,25 +126,6 @@ func (r *AutoObjectCreationReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 	return ctrl.Result{}, nil
 }
 
-// FindObject find object
-// func (r *AutoObjectCreationReconciler) FindObject(gvk schema.GroupVersionKind, req ctrl.Request) (resource unstructured.Unstructured, err error) {
-// 	nn := types.NamespacedName{
-// 		Namespace: "default",
-// 		Name:      "prometheus-rule-default",
-// 	}
-
-// 	fmt.Println("---------------1")
-// 	resource.SetGroupVersionKind(gvk)
-// 	fmt.Println(gvk)
-// 	fmt.Println("---------------2")
-// 	err = r.Client.Get(context.Background(), nn, &resource)
-
-// 	fmt.Println(err.Error())
-// 	fmt.Println("---------------3")
-
-// 	return
-// }
-
 // SetupWithManager setup
 func (r *AutoObjectCreationReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
