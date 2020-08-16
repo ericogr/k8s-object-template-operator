@@ -1,0 +1,20 @@
+# permissions for end users to view aocparams.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: aocparams-viewer-role
+rules:
+- apiGroups:
+  - tools.aoc.github.com
+  resources:
+  - aocparams
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - tools.aoc.github.com
+  resources:
+  - aocparams/status
+  verbs:
+  - get

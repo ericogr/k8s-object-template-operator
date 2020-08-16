@@ -1,0 +1,7 @@
+apiVersion: tools.aoc.github.com/v1
+kind: AOCParams
+metadata:
+  name: aocparams-sample
+spec:
+  # Add fields here
+  foo: bar

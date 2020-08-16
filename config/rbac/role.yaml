@@ -22,6 +22,26 @@ rules:
 - apiGroups:
   - tools.aoc.github.com
   resources:
+  - aocparams
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - tools.aoc.github.com
+  resources:
+  - aocparams/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - tools.aoc.github.com
+  resources:
   - autoobjectcreations
   verbs:
   - create

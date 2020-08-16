@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	aocv1 "github.com/ericogr/k8s-aoc/apis/tools/v1"
+	aocv1 "github.com/ericogr/k8s-aoc/apis/tools.aoc/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"

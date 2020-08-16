@@ -5,4 +5,7 @@ resources:
 - group: tools.aoc
   kind: AutoObjectCreation
   version: v1
+- group: tools.aoc
+  kind: AOCParams
+  version: v1
 version: "2"

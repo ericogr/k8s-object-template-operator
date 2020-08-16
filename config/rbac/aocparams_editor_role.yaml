@@ -1,0 +1,24 @@
+# permissions for end users to edit aocparams.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: aocparams-editor-role
+rules:
+- apiGroups:
+  - tools.aoc.github.com
+  resources:
+  - aocparams
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - tools.aoc.github.com
+  resources:
+  - aocparams/status
+  verbs:
+  - get

@@ -26,8 +26,9 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/tools/v1"
-	controllers "github.com/ericogr/k8s-aoc/controllers/tools"
+	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/tools.aoc/v1"
+	controllers "github.com/ericogr/k8s-aoc/controllers/tools.aoc"
+	toolsaoccontroller "github.com/ericogr/k8s-aoc/controllers/tools.aoc"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -83,6 +84,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err = (&toolsaoccontroller.AOCParamsReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("AOCParams"),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "AOCParams")
+		os.Exit(1)
+	}
 	// +kubebuilder:scaffold:builder
 
 	setupLog.Info("starting manager")

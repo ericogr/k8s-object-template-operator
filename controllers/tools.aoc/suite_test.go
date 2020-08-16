@@ -30,7 +30,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/tools/v1"
+	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/tools.aoc/v1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -61,6 +61,9 @@ var _ = BeforeSuite(func(done Done) {
 	cfg, err = testEnv.Start()
 	Expect(err).ToNot(HaveOccurred())
 	Expect(cfg).ToNot(BeNil())
+
+	err = toolsaocv1.AddToScheme(scheme.Scheme)
+	Expect(err).NotTo(HaveOccurred())
 
 	err = toolsaocv1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
