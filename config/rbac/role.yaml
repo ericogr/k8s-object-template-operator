@@ -7,6 +7,19 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
+  - ""
+  resources:
+  - namespace
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - namespace/status
+  verbs:
+  - get
+- apiGroups:
   - tools.aoc.github.com
   resources:
   - autoobjectcreations
