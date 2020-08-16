@@ -22,7 +22,7 @@ import (
 
 // Values values
 type Values struct {
-	Values map[string]string `json:"values,omitemtpy"`
+	Values map[string]string `json:",inline"`
 }
 
 // AOCParamsSpec defines the desired state of AOCParams
@@ -32,8 +32,6 @@ type AOCParamsSpec struct {
 
 // AOCParamsStatus defines the observed state of AOCParams
 type AOCParamsStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
 }
 
 // +kubebuilder:object:root=true

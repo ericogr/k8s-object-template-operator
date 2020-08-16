@@ -36,14 +36,9 @@ spec:
           properties:
             parameters:
               additionalProperties:
+                additionalProperties:
+                  type: string
                 description: Values values
-                properties:
-                  values:
-                    additionalProperties:
-                      type: string
-                    type: object
-                required:
-                - values
                 type: object
               type: object
           required:
