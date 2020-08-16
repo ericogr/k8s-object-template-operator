@@ -38,6 +38,13 @@ type AutoObjectCreationReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+// SetupWithManager setup
+func (r *AutoObjectCreationReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	return ctrl.NewControllerManagedBy(mgr).
+		For(&toolsaocv1.AutoObjectCreation{}).
+		Complete(r)
+}
+
 // +kubebuilder:rbac:groups=tools.aoc.github.com,resources=autoobjectcreations,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=tools.aoc.github.com,resources=autoobjectcreations/status,verbs=get;update;patch
 
@@ -123,14 +130,12 @@ func (r *AutoObjectCreationReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 		aoc.Status.Status = "OK"
 	}
 
-	return ctrl.Result{}, nil
-}
+	if err := r.Status().Update(ctx, &aoc); err != nil {
+		log.Error(err, "Unable to update status")
+		return ctrl.Result{}, err
+	}
 
-// SetupWithManager setup
-func (r *AutoObjectCreationReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	return ctrl.NewControllerManagedBy(mgr).
-		For(&toolsaocv1.AutoObjectCreation{}).
-		Complete(r)
+	return ctrl.Result{}, nil
 }
 
 // FindNamespaces find all namespaces
