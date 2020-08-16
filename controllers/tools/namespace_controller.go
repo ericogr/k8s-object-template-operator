@@ -17,12 +17,15 @@ limitations under the License.
 package controllers
 
 import (
-	"fmt"
 
 	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
+	"context"
+	"fmt"
+
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
+	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -51,12 +54,37 @@ func (r *NamespaceReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 // Reconcile namespace
 func (r *NamespaceReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	_ = r.Log.WithValues("namespace", namespaceGV)
-	fmt.Println("namespace")
-	fmt.Println(req.NamespacedName.Name)
-	fmt.Println(r.Scheme.Name())
+	fmt.Println("NAMESPACE")
+	fmt.Println("------------------------------------------------------")
+	ctx := context.Background()
+	log := r.Log.WithValues("namespace", namespaceGV)
+	var namespace corev1.Namespace
+	err := r.Get(ctx, req.NamespacedName, &namespace)
 
-	fmt.Println("-----------------------")
+	if err != nil {
+		if k8sErrors.IsNotFound(err) {
+			// Object not found, return. Created objects are automatically garbage collected
+			return ctrl.Result{}, nil
+		}
+
+		// Error reading the object - requeue the request.
+		return ctrl.Result{}, err
+	}
+
+	common := Common{r.Client, r.Log}
+	aocs, err := common.FindAOCs()
+	for _, aoc := range aocs {
+		if common.ValidateNamespace(namespace, aoc.Spec.Trigger.Annotations) {
+			if err := common.UpdateObjectByNamespace(aoc, namespace); err != nil {
+				aoc.Status.Status = err.Error()
+
+				if err := r.Status().Update(ctx, &aoc); err != nil {
+					log.Error(err, "Unable to update status")
+					return ctrl.Result{}, err
+				}
+			}
+		}
+	}
 
 	return ctrl.Result{}, nil
 }
