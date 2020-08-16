@@ -1,4 +1,5 @@
 domain: github.com
+multigroup: true
 repo: github.com/ericogr/k8s-aoc
 resources:
 - group: tools.aoc
