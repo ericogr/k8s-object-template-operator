@@ -69,17 +69,8 @@ spec:
               - name
               - spec
               type: object
-            trigger:
-              description: Trigger trigger for autospec
-              properties:
-                annotations:
-                  additionalProperties:
-                    type: string
-                  type: object
-              type: object
           required:
           - template
-          - trigger
           type: object
         status:
           description: AutoObjectCreationStatus defines the observed state of AutoObjectCreation

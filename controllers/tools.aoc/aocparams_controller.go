@@ -18,13 +18,20 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-logr/logr"
+	corev1 "k8s.io/api/core/v1"
+	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/tools.aoc/v1"
+)
+
+var (
+	namespaceGV = corev1.Namespace{}.APIVersion
 )
 
 // AOCParamsReconciler reconciles a AOCParams object
@@ -37,15 +44,55 @@ type AOCParamsReconciler struct {
 // +kubebuilder:rbac:groups=tools.aoc.github.com,resources=aocparams,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=tools.aoc.github.com,resources=aocparams/status,verbs=get;update;patch
 
+// Reconcile reconcile
 func (r *AOCParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	_ = context.Background()
-	_ = r.Log.WithValues("aocparams", req.NamespacedName)
+	// if 1 > 0 {
+	// 	return ctrl.Result{}, nil
+	// }
 
-	// your logic here
+	ctx := context.Background()
+	log := r.Log.WithValues("aocparams", req.NamespacedName)
+	var params toolsaocv1.AOCParams
+
+	err := r.Get(ctx, req.NamespacedName, &params)
+
+	if err != nil {
+		if k8sErrors.IsNotFound(err) {
+			// Object not found, return. Created objects are automatically garbage collected
+			return ctrl.Result{}, nil
+		}
+
+		// Error reading the object - requeue the request.
+		return ctrl.Result{}, err
+	}
+
+	common := Common{r.Client, r.Log}
+
+	for name, values := range params.Spec.Parameters {
+		aoc, err := common.GetAOCByName(name)
+
+		if err != nil {
+			log.Error(err, "Failed to get aoc template")
+			return ctrl.Result{}, err
+		}
+
+		if aoc != nil {
+			fmt.Println("----------------")
+			fmt.Println(params.Spec.Parameters)
+			fmt.Println("----------------")
+			err = common.UpdateObjectByNamespace(*aoc, req.NamespacedName.Namespace, values.Values)
+
+			if err != nil {
+				log.Error(err, "Failed to update aoc template")
+				return ctrl.Result{}, err
+			}
+		}
+	}
 
 	return ctrl.Result{}, nil
 }
 
+// SetupWithManager setup
 func (r *AOCParamsReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&toolsaocv1.AOCParams{}).

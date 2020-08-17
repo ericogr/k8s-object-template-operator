@@ -4,12 +4,8 @@ kind: AutoObjectCreation
 metadata:
   name: autoobjectcreation-sample
 spec:
-  trigger:
-    annotations:
-      annotation1: value1
-      annotation2: value2
   template:
-    name: prometheus-rule-default
+    name: prometheus-rules-default
     kind: PrometheusRule
     apiVersion: monitoring.coreos.com/v1
     spec: |-
@@ -18,12 +14,12 @@ spec:
         rules:
         - alert: pod_not_ready
           annotations:
-            description: 'Pod not ready : {{ $labels.pod }}'
-            summary: 'Pod not ready: {{ $labels.pod }}'
-          expr: sum by(pod) (kube_pod_status_ready{namespace="hube-app"} == 0) != 0
+            description: 'Pod not ready : {{"{{ $labels.pod }}"}}'
+            summary: 'Pod not ready: {{"{{ $labels.pod }}"}}'
+          expr: sum by(pod) (kube_pod_status_ready{namespace="{{ .namespace }}"} == 0) != 0
           for: 10m
           labels:
-            totvsapp_app: hube
+            totvsapp_app: {{ .totvsapp_app }}
             totvsapp_route: slack
             totvsapp_severity: critical
-            totvsapp_slack_channel: '#integracao-hube-alerts'
+            totvsapp_slack_channel: '{{ .totvsapp_slack_channel }}'

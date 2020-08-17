@@ -20,14 +20,14 @@ type Common struct {
 }
 
 // UpdateObjectByNamespace update namespace
-func (r *Common) UpdateObjectByNamespace(aoc toolsaocv1.AutoObjectCreation, namespace corev1.Namespace) error {
+func (r *Common) UpdateObjectByNamespace(aoc toolsaocv1.AutoObjectCreation, namespaceName string, values map[string]string) error {
 	ctx := context.Background()
 	log := r.Log.WithValues("autoobjectcreation", aocGV)
-	reference := "[" + aoc.Spec.Template.Kind + "(" + aoc.Spec.Template.Name + ")] at " + namespace.ObjectMeta.Name + " namespace"
+	reference := "[" + aoc.Spec.Template.Kind + "(" + aoc.Spec.Template.Name + ")] at " + namespaceName + " namespace"
 	log.Info("Ready to process " + reference)
 
 	processor := processor.Processor{Client: r.Client}
-	newObj, gvk, err := processor.ToObject(aoc.Spec.Template, namespace)
+	newObj, gvk, err := processor.ToObject(aoc.Spec.Template, values, namespaceName)
 
 	if err != nil {
 		return errors.New("Error serializing " + reference + ": " + err.Error())
@@ -38,7 +38,7 @@ func (r *Common) UpdateObjectByNamespace(aoc toolsaocv1.AutoObjectCreation, name
 	findObj, err := processor.GetObject(
 		*gvk,
 		types.NamespacedName{
-			Namespace: namespace.Name,
+			Namespace: namespaceName,
 			Name:      aoc.Spec.Template.Name,
 		},
 	)
@@ -74,22 +74,51 @@ func (r *Common) UpdateObjectByNamespace(aoc toolsaocv1.AutoObjectCreation, name
 	return nil
 }
 
-// FindNamespacesByAnnotation find namespaces by annotation map
-func (r *Common) FindNamespacesByAnnotation(annotations map[string]string) ([]corev1.Namespace, error) {
-	namespaces, err := r.FindNamespaces()
+// FindAOCParamsValuesByNameNamespace find aos params by name and namespace
+func (r *Common) FindAOCParamsValuesByNameNamespace(name string, namespace string) (*toolsaocv1.Values, error) {
+	aocParams, err := r.FindAOCParams()
 	if err != nil {
 		return nil, err
 	}
 
-	var foundedNamespaces []corev1.Namespace
-
-	for _, namespace := range namespaces {
-		if r.ValidateNamespace(namespace, annotations) {
-			foundedNamespaces = append(foundedNamespaces, namespace)
+	for _, aocParam := range aocParams {
+		if aocParam.Namespace == namespace {
+			for key, values := range aocParam.Spec.Parameters {
+				if key == name {
+					return &values, nil
+				}
+			}
 		}
 	}
 
-	return foundedNamespaces, nil
+	return nil, nil
+}
+
+// FindAOCParamsByTemplateName find all aoc params by template name
+func (r *Common) FindAOCParamsByTemplateName(templateName string) ([]toolsaocv1.AOCParams, error) {
+	aocParams, err := r.FindAOCParams()
+	if err != nil {
+		return nil, err
+	}
+
+	var aocParamsRet []toolsaocv1.AOCParams
+
+	for _, aocParam := range aocParams {
+		for key := range aocParam.Spec.Parameters {
+			if key == templateName {
+				aocParamsRet = append(aocParamsRet, aocParam)
+			}
+		}
+	}
+
+	return aocParamsRet, nil
+}
+
+// FindAOCParams find all aoc params
+func (r *Common) FindAOCParams() ([]toolsaocv1.AOCParams, error) {
+	aocParamsList := &toolsaocv1.AOCParamsList{}
+	err := r.Client.List(context.Background(), aocParamsList)
+	return aocParamsList.Items, err
 }
 
 // ValidateNamespace validate by annotations
@@ -104,13 +133,21 @@ func (r *Common) ValidateNamespace(namespace corev1.Namespace, annotations map[s
 	return
 }
 
-// FindNamespaces find all namespaces
-func (r *Common) FindNamespaces() (namespaces []corev1.Namespace, err error) {
-	namespacesList := &corev1.NamespaceList{}
-	err = r.Client.List(context.Background(), namespacesList)
-	namespaces = namespacesList.Items
+// GetAOCByName get aoc by name
+func (r *Common) GetAOCByName(name string) (*toolsaocv1.AutoObjectCreation, error) {
+	aocs, err := r.FindAOCs()
 
-	return
+	if err != nil {
+		return nil, err
+	}
+
+	for _, aoc := range aocs {
+		if aoc.Spec.Template.Name == name {
+			return &aoc, nil
+		}
+	}
+
+	return nil, nil
 }
 
 // FindAOCs find all AOC

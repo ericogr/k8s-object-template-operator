@@ -53,6 +53,10 @@ func (r *AutoObjectCreationReconciler) SetupWithManager(mgr ctrl.Manager) error 
 
 // Reconcile k8s reconcile
 func (r *AutoObjectCreationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+	// if 1 > 0 {
+	// 	return ctrl.Result{}, nil
+	// }
+
 	ctx := context.Background()
 	log := r.Log.WithValues("autoobjectcreation", aocGV)
 	var aoc toolsaocv1.AutoObjectCreation
@@ -69,11 +73,17 @@ func (r *AutoObjectCreationReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 	}
 
 	common := Common{r.Client, r.Log}
-	namespaces, err := common.FindNamespacesByAnnotation(aoc.Spec.Trigger.Annotations)
-	var listErrors string
-	for _, namespace := range namespaces {
-		if err := common.UpdateObjectByNamespace(aoc, namespace); err != nil {
-			listErrors += err.Error() + "\n"
+	aocParams, err := common.FindAOCParamsByTemplateName(aoc.Spec.Template.Name)
+	listErrors := ""
+	if err != nil {
+		listErrors = err.Error()
+	} else {
+		for _, aocParam := range aocParams {
+			paramNamespace := aocParam.Namespace
+			paramValues := aocParam.Spec.Parameters[aoc.Spec.Template.Name]
+			if err := common.UpdateObjectByNamespace(aoc, paramNamespace, paramValues.Values); err != nil {
+				listErrors += err.Error() + "\n"
+			}
 		}
 	}
 

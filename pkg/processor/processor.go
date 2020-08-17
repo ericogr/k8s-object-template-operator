@@ -3,9 +3,9 @@ package processor
 import (
 	"context"
 	"strings"
+	"text/template"
 
-	aocv1 "github.com/ericogr/k8s-aoc/apis/tools.aoc/v1"
-	corev1 "k8s.io/api/core/v1"
+	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/tools.aoc/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
@@ -37,11 +37,17 @@ func (aoc *Processor) GetObject(gvk schema.GroupVersionKind, nn types.Namespaced
 }
 
 // ToObject process object from template
-func (aoc *Processor) ToObject(template aocv1.Template, namespace corev1.Namespace) (unstructured.Unstructured, *schema.GroupVersionKind, error) {
+func (aoc *Processor) ToObject(template toolsaocv1.Template, values map[string]string, namespaceName string) (unstructured.Unstructured, *schema.GroupVersionKind, error) {
 	templateYAML := aoc.getStrFromTemplate(template)
+	templateYAMLExecuted, err := aoc.executeTemplate(templateYAML, values)
+
+	if err != nil {
+		return unstructured.Unstructured{}, nil, err
+	}
+
 	object := unstructured.Unstructured{}
 	dec := yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
-	_, _, err := dec.Decode([]byte(templateYAML), nil, &object)
+	_, _, err = dec.Decode([]byte(templateYAMLExecuted), nil, &object)
 
 	if err != nil {
 		return object, nil, err
@@ -49,7 +55,7 @@ func (aoc *Processor) ToObject(template aocv1.Template, namespace corev1.Namespa
 
 	gvk := schema.FromAPIVersionAndKind(template.APIVersion, template.Kind)
 
-	object.SetNamespace(namespace.GetName())
+	object.SetNamespace(namespaceName)
 	object.SetGroupVersionKind(gvk)
 	object.SetName(template.Name)
 
@@ -57,7 +63,7 @@ func (aoc *Processor) ToObject(template aocv1.Template, namespace corev1.Namespa
 }
 
 // getStrFromTemplate get string from template
-func (aoc *Processor) getStrFromTemplate(template aocv1.Template) string {
+func (aoc *Processor) getStrFromTemplate(template toolsaocv1.Template) string {
 	return `
 apiVersion: ` + template.APIVersion + `
 kind: ` + template.Kind + `
@@ -67,4 +73,21 @@ spec:
 
 func (aoc *Processor) addIdentation(str string) string {
 	return strings.ReplaceAll(str, "\n", "\n  ")
+}
+
+func (aoc *Processor) executeTemplate(templateYAML string, values map[string]string) (string, error) {
+	template, err := template.New("template").Parse(templateYAML)
+
+	if err != nil {
+		return "", err
+	}
+
+	sb := strings.Builder{}
+	err = template.Execute(&sb, values)
+
+	if err != nil {
+		return "", err
+	}
+
+	return sb.String(), nil
 }

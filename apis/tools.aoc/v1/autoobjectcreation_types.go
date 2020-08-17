@@ -35,14 +35,8 @@ type Template struct {
 	Spec       string   `json:"spec"`
 }
 
-// Trigger trigger for autospec
-type Trigger struct {
-	Annotations map[string]string `json:"annotations,omitempty"`
-}
-
 // AutoObjectCreationSpec defines the desired state of AutoObjectCreation
 type AutoObjectCreationSpec struct {
-	Trigger  Trigger  `json:"trigger"`
 	Template Template `json:"template"`
 }
 

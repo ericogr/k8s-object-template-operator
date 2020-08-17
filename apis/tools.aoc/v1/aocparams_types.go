@@ -22,7 +22,7 @@ import (
 
 // Values values
 type Values struct {
-	Values map[string]string `json:",inline"`
+	Values map[string]string `json:"values,omitempty"`
 }
 
 // AOCParamsSpec defines the desired state of AOCParams
