@@ -18,7 +18,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
@@ -77,9 +76,6 @@ func (r *AOCParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		}
 
 		if aoc != nil {
-			fmt.Println("----------------")
-			fmt.Println(params.Spec.Parameters)
-			fmt.Println("----------------")
 			err = common.UpdateObjectByNamespace(*aoc, req.NamespacedName.Namespace, values.Values)
 
 			if err != nil {
