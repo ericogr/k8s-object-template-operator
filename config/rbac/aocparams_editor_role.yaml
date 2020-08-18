@@ -5,7 +5,7 @@ metadata:
   name: aocparams-editor-role
 rules:
 - apiGroups:
-  - tools.aoc.github.com
+  - template.totvs.app.github.com
   resources:
   - aocparams
   verbs:
@@ -17,7 +17,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - tools.aoc.github.com
+  - template.totvs.app.github.com
   resources:
   - aocparams/status
   verbs:

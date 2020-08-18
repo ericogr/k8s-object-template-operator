@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/tools.aoc/v1"
+	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/tools.aoc/v1"
+	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 	"github.com/ericogr/k8s-aoc/pkg/processor"
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"

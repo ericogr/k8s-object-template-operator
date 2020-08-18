@@ -27,7 +27,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/tools.aoc/v1"
+	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 )
 
 var (
@@ -48,8 +48,8 @@ func (r *AutoObjectCreationReconciler) SetupWithManager(mgr ctrl.Manager) error 
 		Complete(r)
 }
 
-// +kubebuilder:rbac:groups=tools.aoc.github.com,resources=autoobjectcreations,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=tools.aoc.github.com,resources=autoobjectcreations/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=autoobjectcreations,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=autoobjectcreations/status,verbs=get;update;patch
 
 // Reconcile k8s reconcile
 func (r *AutoObjectCreationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {

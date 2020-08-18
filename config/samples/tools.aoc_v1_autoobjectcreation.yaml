@@ -1,5 +1,5 @@
 ---
-apiVersion: tools.aoc.github.com/v1
+apiVersion: template.totvs.app.github.com/v1
 kind: AutoObjectCreation
 metadata:
   name: autoobjectcreation-sample

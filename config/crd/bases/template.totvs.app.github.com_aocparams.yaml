@@ -6,9 +6,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.2.5
   creationTimestamp: null
-  name: aocparams.tools.aoc.github.com
+  name: aocparams.template.totvs.app.github.com
 spec:
-  group: tools.aoc.github.com
+  group: template.totvs.app.github.com
   names:
     kind: AOCParams
     listKind: AOCParamsList

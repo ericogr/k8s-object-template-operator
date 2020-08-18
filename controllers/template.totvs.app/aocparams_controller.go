@@ -26,7 +26,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/tools.aoc/v1"
+	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 )
 
 var (
@@ -40,8 +40,8 @@ type AOCParamsReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=tools.aoc.github.com,resources=aocparams,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=tools.aoc.github.com,resources=aocparams/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=aocparams,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=aocparams/status,verbs=get;update;patch
 
 // Reconcile reconcile
 func (r *AOCParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {

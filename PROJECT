@@ -2,10 +2,10 @@ domain: github.com
 multigroup: true
 repo: github.com/ericogr/k8s-aoc
 resources:
-- group: tools.aoc
+- group: template.totvs.app
   kind: AutoObjectCreation
   version: v1
-- group: tools.aoc
+- group: template.totvs.app
   kind: AOCParams
   version: v1
 version: "2"
