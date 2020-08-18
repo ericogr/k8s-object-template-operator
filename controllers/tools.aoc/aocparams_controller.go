@@ -45,10 +45,6 @@ type AOCParamsReconciler struct {
 
 // Reconcile reconcile
 func (r *AOCParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	// if 1 > 0 {
-	// 	return ctrl.Result{}, nil
-	// }
-
 	ctx := context.Background()
 	log := r.Log.WithValues("aocparams", req.NamespacedName)
 	var params toolsaocv1.AOCParams

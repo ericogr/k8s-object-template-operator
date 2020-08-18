@@ -3,6 +3,7 @@ apiVersion: tools.aoc.github.com/v1
 kind: AOCParams
 metadata:
   name: aocparams-sample
+  namespace: default
 spec:
   templates:
   - name: prometheus-rules-default

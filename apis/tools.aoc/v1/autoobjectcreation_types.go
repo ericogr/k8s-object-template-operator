@@ -46,6 +46,7 @@ type AutoObjectCreationStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:resource:path=autoobjectcreations,scope=Cluster
 // +kubebuilder:printcolumn:name="status",type=string,JSONPath=`.status.status`
 // +kubebuilder:subresource:status
 

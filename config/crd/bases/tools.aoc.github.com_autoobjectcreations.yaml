@@ -18,7 +18,7 @@ spec:
     listKind: AutoObjectCreationList
     plural: autoobjectcreations
     singular: autoobjectcreation
-  scope: Namespaced
+  scope: Cluster
   subresources:
     status: {}
   validation:
