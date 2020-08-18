@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
+	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
@@ -37,7 +37,7 @@ func (aoc *Processor) GetObject(gvk schema.GroupVersionKind, nn types.Namespaced
 }
 
 // ToObject process object from template
-func (aoc *Processor) ToObject(template toolsaocv1.Template, values map[string]string, namespaceName string) (unstructured.Unstructured, *schema.GroupVersionKind, error) {
+func (aoc *Processor) ToObject(template otv1.Template, values map[string]string, namespaceName string) (unstructured.Unstructured, *schema.GroupVersionKind, error) {
 	values["__namespace"] = namespaceName
 	templateYAML := aoc.getStrFromTemplate(template)
 	templateYAMLExecuted, err := aoc.executeTemplate(templateYAML, values)
@@ -64,7 +64,7 @@ func (aoc *Processor) ToObject(template toolsaocv1.Template, values map[string]s
 }
 
 // getStrFromTemplate get string from template
-func (aoc *Processor) getStrFromTemplate(template toolsaocv1.Template) string {
+func (aoc *Processor) getStrFromTemplate(template otv1.Template) string {
 	return `
 apiVersion: ` + template.APIVersion + `
 kind: ` + template.Kind + `

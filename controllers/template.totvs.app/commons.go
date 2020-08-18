@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
+	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 	"github.com/ericogr/k8s-aoc/pkg/processor"
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
@@ -20,7 +20,7 @@ type Common struct {
 }
 
 // UpdateObjectByNamespace update namespace
-func (r *Common) UpdateObjectByNamespace(aoc toolsaocv1.ObjectTemplate, namespaceName string, values map[string]string) error {
+func (r *Common) UpdateObjectByNamespace(aoc otv1.ObjectTemplate, namespaceName string, values map[string]string) error {
 	ctx := context.Background()
 	log := r.Log.WithValues("objecttemplate", aocGV)
 	reference := "[" + aoc.Spec.Template.Kind + "(" + aoc.Spec.Template.Name + ")] at " + namespaceName + " namespace"
@@ -75,13 +75,13 @@ func (r *Common) UpdateObjectByNamespace(aoc toolsaocv1.ObjectTemplate, namespac
 }
 
 // FindObjectTemplateParamsByTemplateName find all aoc params by template name
-func (r *Common) FindObjectTemplateParamsByTemplateName(templateName string) ([]toolsaocv1.ObjectTemplateParams, error) {
+func (r *Common) FindObjectTemplateParamsByTemplateName(templateName string) ([]otv1.ObjectTemplateParams, error) {
 	aocParams, err := r.FindObjectTemplateParams()
 	if err != nil {
 		return nil, err
 	}
 
-	var aocParamsRet []toolsaocv1.ObjectTemplateParams
+	var aocParamsRet []otv1.ObjectTemplateParams
 
 	for _, aocParam := range aocParams {
 		_, err := aocParam.Spec.GetParametersByTemplateName(templateName)
@@ -95,8 +95,8 @@ func (r *Common) FindObjectTemplateParamsByTemplateName(templateName string) ([]
 }
 
 // FindObjectTemplateParams find all aoc params
-func (r *Common) FindObjectTemplateParams() ([]toolsaocv1.ObjectTemplateParams, error) {
-	aocParamsList := &toolsaocv1.ObjectTemplateParamsList{}
+func (r *Common) FindObjectTemplateParams() ([]otv1.ObjectTemplateParams, error) {
+	aocParamsList := &otv1.ObjectTemplateParamsList{}
 	err := r.Client.List(context.Background(), aocParamsList)
 	return aocParamsList.Items, err
 }
@@ -114,7 +114,7 @@ func (r *Common) ValidateNamespace(namespace corev1.Namespace, annotations map[s
 }
 
 // GetAOCByName get aoc by name
-func (r *Common) GetAOCByName(name string) (*toolsaocv1.ObjectTemplate, error) {
+func (r *Common) GetAOCByName(name string) (*otv1.ObjectTemplate, error) {
 	aocs, err := r.FindAOCs()
 
 	if err != nil {
@@ -131,8 +131,8 @@ func (r *Common) GetAOCByName(name string) (*toolsaocv1.ObjectTemplate, error) {
 }
 
 // FindAOCs find all AOC
-func (r *Common) FindAOCs() (aoc []toolsaocv1.ObjectTemplate, err error) {
-	aocList := &toolsaocv1.ObjectTemplateList{}
+func (r *Common) FindAOCs() (aoc []otv1.ObjectTemplate, err error) {
+	aocList := &otv1.ObjectTemplateList{}
 	err = r.Client.List(context.Background(), aocList)
 	aoc = aocList.Items
 

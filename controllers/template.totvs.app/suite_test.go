@@ -30,7 +30,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
+	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -62,10 +62,10 @@ var _ = BeforeSuite(func(done Done) {
 	Expect(err).ToNot(HaveOccurred())
 	Expect(cfg).ToNot(BeNil())
 
-	err = toolsaocv1.AddToScheme(scheme.Scheme)
+	err = otv1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
-	err = toolsaocv1.AddToScheme(scheme.Scheme)
+	err = otv1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
 	// +kubebuilder:scaffold:scheme

@@ -26,7 +26,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
+	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 	controllers "github.com/ericogr/k8s-aoc/controllers/template.totvs.app"
 	toolsaoccontroller "github.com/ericogr/k8s-aoc/controllers/template.totvs.app"
 	// +kubebuilder:scaffold:imports
@@ -39,7 +39,7 @@ var (
 
 func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
-	_ = toolsaocv1.AddToScheme(scheme)
+	_ = otv1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 

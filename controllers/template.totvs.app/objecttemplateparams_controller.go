@@ -26,7 +26,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
+	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 )
 
 var (
@@ -47,7 +47,7 @@ type ObjectTemplateParamsReconciler struct {
 func (r *ObjectTemplateParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
 	log := r.Log.WithValues("objecttemplateparams", req.NamespacedName)
-	var params toolsaocv1.ObjectTemplateParams
+	var params otv1.ObjectTemplateParams
 
 	err := r.Get(ctx, req.NamespacedName, &params)
 
@@ -87,6 +87,6 @@ func (r *ObjectTemplateParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Resul
 // SetupWithManager setup
 func (r *ObjectTemplateParamsReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&toolsaocv1.ObjectTemplateParams{}).
+		For(&otv1.ObjectTemplateParams{}).
 		Complete(r)
 }

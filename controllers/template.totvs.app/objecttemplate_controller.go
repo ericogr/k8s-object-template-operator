@@ -27,11 +27,11 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	toolsaocv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
+	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 )
 
 var (
-	aocGV = toolsaocv1.GroupVersion.String()
+	aocGV = otv1.GroupVersion.String()
 )
 
 // ObjectTemplateReconciler aoc reconciler
@@ -44,7 +44,7 @@ type ObjectTemplateReconciler struct {
 // SetupWithManager setup
 func (r *ObjectTemplateReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&toolsaocv1.ObjectTemplate{}).
+		For(&otv1.ObjectTemplate{}).
 		Complete(r)
 }
 
@@ -59,7 +59,7 @@ func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 
 	ctx := context.Background()
 	log := r.Log.WithValues("objecttemplate", aocGV)
-	var aoc toolsaocv1.ObjectTemplate
+	var aoc otv1.ObjectTemplate
 	err := r.Get(ctx, req.NamespacedName, &aoc)
 
 	if err != nil {
