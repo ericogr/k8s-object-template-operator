@@ -80,9 +80,16 @@ func (r *AutoObjectCreationReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 	} else {
 		for _, aocParam := range aocParams {
 			paramNamespace := aocParam.Namespace
-			paramValues := aocParam.Spec.Parameters[aoc.Spec.Template.Name]
+			paramValues, err := aocParam.Spec.GetParametersByTemplateName(aoc.Spec.Template.Name)
+
+			if err != nil {
+				listErrors += err.Error() + "\n"
+				continue
+			}
+
 			if err := common.UpdateObjectByNamespace(aoc, paramNamespace, paramValues.Values); err != nil {
 				listErrors += err.Error() + "\n"
+				continue
 			}
 		}
 	}

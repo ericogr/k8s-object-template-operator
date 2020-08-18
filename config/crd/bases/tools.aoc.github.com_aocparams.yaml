@@ -34,18 +34,22 @@ spec:
         spec:
           description: AOCParamsSpec defines the desired state of AOCParams
           properties:
-            parameters:
-              additionalProperties:
-                description: Values values
+            templates:
+              items:
+                description: Parameters values
                 properties:
+                  name:
+                    type: string
                   values:
                     additionalProperties:
                       type: string
                     type: object
+                required:
+                - name
                 type: object
-              type: object
+              type: array
           required:
-          - parameters
+          - templates
           type: object
         status:
           description: AOCParamsStatus defines the observed state of AOCParams

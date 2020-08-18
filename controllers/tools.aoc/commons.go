@@ -74,26 +74,6 @@ func (r *Common) UpdateObjectByNamespace(aoc toolsaocv1.AutoObjectCreation, name
 	return nil
 }
 
-// FindAOCParamsValuesByNameNamespace find aos params by name and namespace
-func (r *Common) FindAOCParamsValuesByNameNamespace(name string, namespace string) (*toolsaocv1.Values, error) {
-	aocParams, err := r.FindAOCParams()
-	if err != nil {
-		return nil, err
-	}
-
-	for _, aocParam := range aocParams {
-		if aocParam.Namespace == namespace {
-			for key, values := range aocParam.Spec.Parameters {
-				if key == name {
-					return &values, nil
-				}
-			}
-		}
-	}
-
-	return nil, nil
-}
-
 // FindAOCParamsByTemplateName find all aoc params by template name
 func (r *Common) FindAOCParamsByTemplateName(templateName string) ([]toolsaocv1.AOCParams, error) {
 	aocParams, err := r.FindAOCParams()
@@ -104,10 +84,10 @@ func (r *Common) FindAOCParamsByTemplateName(templateName string) ([]toolsaocv1.
 	var aocParamsRet []toolsaocv1.AOCParams
 
 	for _, aocParam := range aocParams {
-		for key := range aocParam.Spec.Parameters {
-			if key == templateName {
-				aocParamsRet = append(aocParamsRet, aocParam)
-			}
+		_, err := aocParam.Spec.GetParametersByTemplateName(templateName)
+
+		if err == nil {
+			aocParamsRet = append(aocParamsRet, aocParam)
 		}
 	}
 

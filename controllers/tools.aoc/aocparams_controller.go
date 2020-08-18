@@ -67,8 +67,8 @@ func (r *AOCParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 
 	common := Common{r.Client, r.Log}
 
-	for name, values := range params.Spec.Parameters {
-		aoc, err := common.GetAOCByName(name)
+	for _, parameter := range params.Spec.Templates {
+		aoc, err := common.GetAOCByName(parameter.Name)
 
 		if err != nil {
 			log.Error(err, "Failed to get aoc template")
@@ -76,7 +76,7 @@ func (r *AOCParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		}
 
 		if aoc != nil {
-			err = common.UpdateObjectByNamespace(*aoc, req.NamespacedName.Namespace, values.Values)
+			err = common.UpdateObjectByNamespace(*aoc, req.NamespacedName.Namespace, parameter.Values)
 
 			if err != nil {
 				log.Error(err, "Failed to update aoc template")

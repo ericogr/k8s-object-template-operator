@@ -20,14 +20,15 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// Values values
-type Values struct {
+// Parameters values
+type Parameters struct {
+	Name   string            `json:"name"`
 	Values map[string]string `json:"values,omitempty"`
 }
 
 // AOCParamsSpec defines the desired state of AOCParams
 type AOCParamsSpec struct {
-	Parameters map[string]Values `json:"parameters"`
+	Templates []Parameters `json:"templates"`
 }
 
 // AOCParamsStatus defines the observed state of AOCParams

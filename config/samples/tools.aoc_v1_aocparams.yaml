@@ -1,11 +1,12 @@
+---
 apiVersion: tools.aoc.github.com/v1
 kind: AOCParams
 metadata:
   name: aocparams-sample
 spec:
-  parameters:
-    prometheus-rules-default:
-      values:
-        totvsapp_slack_channel: '#integracao-hube-alerts'
-        totvsapp_app: hube
-        namespace: hube-app
+  templates:
+  - name: prometheus-rules-default
+    values:
+      totvsapp_slack_channel: '#integracao-hube-alerts'
+      totvsapp_app: hube
+      namespace: hube-app
