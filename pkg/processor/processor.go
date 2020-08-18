@@ -38,6 +38,7 @@ func (aoc *Processor) GetObject(gvk schema.GroupVersionKind, nn types.Namespaced
 
 // ToObject process object from template
 func (aoc *Processor) ToObject(template toolsaocv1.Template, values map[string]string, namespaceName string) (unstructured.Unstructured, *schema.GroupVersionKind, error) {
+	values["__namespace"] = namespaceName
 	templateYAML := aoc.getStrFromTemplate(template)
 	templateYAMLExecuted, err := aoc.executeTemplate(templateYAML, values)
 

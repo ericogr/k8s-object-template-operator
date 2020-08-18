@@ -16,7 +16,7 @@ spec:
           annotations:
             description: 'Pod not ready : {{"{{ $labels.pod }}"}}'
             summary: 'Pod not ready: {{"{{ $labels.pod }}"}}'
-          expr: sum by(pod) (kube_pod_status_ready{namespace="{{ .namespace }}"} == 0) != 0
+          expr: sum by(pod) (kube_pod_status_ready{namespace="{{ .__namespace }}"} == 0) != 0
           for: 10m
           labels:
             totvsapp_app: {{ .totvsapp_app }}

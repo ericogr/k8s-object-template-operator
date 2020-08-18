@@ -9,4 +9,3 @@ spec:
     values:
       totvsapp_slack_channel: '#integracao-hube-alerts'
       totvsapp_app: hube
-      namespace: hube-app
