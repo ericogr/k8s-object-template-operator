@@ -3,9 +3,9 @@ multigroup: true
 repo: github.com/ericogr/k8s-aoc
 resources:
 - group: template.totvs.app
-  kind: AutoObjectCreation
+  kind: ObjectTemplate
   version: v1
 - group: template.totvs.app
-  kind: AOCParams
+  kind: ObjectTemplateParams
   version: v1
 version: "2"

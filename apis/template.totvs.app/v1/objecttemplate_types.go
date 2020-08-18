@@ -35,39 +35,39 @@ type Template struct {
 	Spec       string   `json:"spec"`
 }
 
-// AutoObjectCreationSpec defines the desired state of AutoObjectCreation
-type AutoObjectCreationSpec struct {
+// ObjectTemplateSpec defines the desired state of ObjectTemplate
+type ObjectTemplateSpec struct {
 	Template Template `json:"template"`
 }
 
-// AutoObjectCreationStatus defines the observed state of AutoObjectCreation
-type AutoObjectCreationStatus struct {
+// ObjectTemplateStatus defines the observed state of ObjectTemplate
+type ObjectTemplateStatus struct {
 	Status string `json:"status"`
 }
 
 // +kubebuilder:object:root=true
-// +kubebuilder:resource:path=autoobjectcreations,scope=Cluster
+// +kubebuilder:resource:path=objecttemplates,scope=Cluster
 // +kubebuilder:printcolumn:name="status",type=string,JSONPath=`.status.status`
 // +kubebuilder:subresource:status
 
-// AutoObjectCreation is the Schema for the autoobjectcreations API
-type AutoObjectCreation struct {
+// ObjectTemplate is the Schema for the objecttemplates API
+type ObjectTemplate struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   AutoObjectCreationSpec   `json:"spec,omitempty"`
-	Status AutoObjectCreationStatus `json:"status,omitempty"`
+	Spec   ObjectTemplateSpec   `json:"spec,omitempty"`
+	Status ObjectTemplateStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// AutoObjectCreationList contains a list of AutoObjectCreation
-type AutoObjectCreationList struct {
+// ObjectTemplateList contains a list of ObjectTemplate
+type ObjectTemplateList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []AutoObjectCreation `json:"items"`
+	Items           []ObjectTemplate `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&AutoObjectCreation{}, &AutoObjectCreationList{})
+	SchemeBuilder.Register(&ObjectTemplate{}, &ObjectTemplateList{})
 }

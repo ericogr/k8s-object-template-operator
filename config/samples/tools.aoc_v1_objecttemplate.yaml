@@ -1,8 +1,8 @@
 ---
 apiVersion: template.totvs.app.github.com/v1
-kind: AutoObjectCreation
+kind: ObjectTemplate
 metadata:
-  name: autoobjectcreation-sample
+  name: objecttemplate-sample
 spec:
   template:
     name: prometheus-rules-default

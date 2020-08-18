@@ -33,21 +33,21 @@ var (
 	namespaceGV = corev1.Namespace{}.APIVersion
 )
 
-// AOCParamsReconciler reconciles a AOCParams object
-type AOCParamsReconciler struct {
+// ObjectTemplateParamsReconciler reconciles a ObjectTemplateParams object
+type ObjectTemplateParamsReconciler struct {
 	client.Client
 	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=aocparams,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=aocparams/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=objecttemplateparams,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=objecttemplateparams/status,verbs=get;update;patch
 
 // Reconcile reconcile
-func (r *AOCParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+func (r *ObjectTemplateParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
-	log := r.Log.WithValues("aocparams", req.NamespacedName)
-	var params toolsaocv1.AOCParams
+	log := r.Log.WithValues("objecttemplateparams", req.NamespacedName)
+	var params toolsaocv1.ObjectTemplateParams
 
 	err := r.Get(ctx, req.NamespacedName, &params)
 
@@ -85,8 +85,8 @@ func (r *AOCParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 }
 
 // SetupWithManager setup
-func (r *AOCParamsReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *ObjectTemplateParamsReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&toolsaocv1.AOCParams{}).
+		For(&toolsaocv1.ObjectTemplateParams{}).
 		Complete(r)
 }

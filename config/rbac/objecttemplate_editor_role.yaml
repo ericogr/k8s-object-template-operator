@@ -1,13 +1,13 @@
-# permissions for end users to edit autoobjectcreations.
+# permissions for end users to edit objecttemplates.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: autoobjectcreation-editor-role
+  name: objecttemplate-editor-role
 rules:
 - apiGroups:
   - template.totvs.app.github.com
   resources:
-  - autoobjectcreations
+  - objecttemplates
   verbs:
   - create
   - delete
@@ -19,6 +19,6 @@ rules:
 - apiGroups:
   - template.totvs.app.github.com
   resources:
-  - autoobjectcreations/status
+  - objecttemplates/status
   verbs:
   - get

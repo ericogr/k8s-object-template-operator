@@ -6,7 +6,7 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.2.5
   creationTimestamp: null
-  name: autoobjectcreations.template.totvs.app.github.com
+  name: objecttemplates.template.totvs.app.github.com
 spec:
   additionalPrinterColumns:
   - JSONPath: .status.status
@@ -14,16 +14,16 @@ spec:
     type: string
   group: template.totvs.app.github.com
   names:
-    kind: AutoObjectCreation
-    listKind: AutoObjectCreationList
-    plural: autoobjectcreations
-    singular: autoobjectcreation
+    kind: ObjectTemplate
+    listKind: ObjectTemplateList
+    plural: objecttemplates
+    singular: objecttemplate
   scope: Cluster
   subresources:
     status: {}
   validation:
     openAPIV3Schema:
-      description: AutoObjectCreation is the Schema for the autoobjectcreations API
+      description: ObjectTemplate is the Schema for the objecttemplates API
       properties:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
@@ -38,7 +38,7 @@ spec:
         metadata:
           type: object
         spec:
-          description: AutoObjectCreationSpec defines the desired state of AutoObjectCreation
+          description: ObjectTemplateSpec defines the desired state of ObjectTemplate
           properties:
             template:
               description: Template defines template for spec creation
@@ -73,7 +73,7 @@ spec:
           - template
           type: object
         status:
-          description: AutoObjectCreationStatus defines the observed state of AutoObjectCreation
+          description: ObjectTemplateStatus defines the observed state of ObjectTemplate
           properties:
             status:
               type: string

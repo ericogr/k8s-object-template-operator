@@ -20,9 +20,9 @@ type Common struct {
 }
 
 // UpdateObjectByNamespace update namespace
-func (r *Common) UpdateObjectByNamespace(aoc toolsaocv1.AutoObjectCreation, namespaceName string, values map[string]string) error {
+func (r *Common) UpdateObjectByNamespace(aoc toolsaocv1.ObjectTemplate, namespaceName string, values map[string]string) error {
 	ctx := context.Background()
-	log := r.Log.WithValues("autoobjectcreation", aocGV)
+	log := r.Log.WithValues("objecttemplate", aocGV)
 	reference := "[" + aoc.Spec.Template.Kind + "(" + aoc.Spec.Template.Name + ")] at " + namespaceName + " namespace"
 	log.Info("Ready to process " + reference)
 
@@ -74,14 +74,14 @@ func (r *Common) UpdateObjectByNamespace(aoc toolsaocv1.AutoObjectCreation, name
 	return nil
 }
 
-// FindAOCParamsByTemplateName find all aoc params by template name
-func (r *Common) FindAOCParamsByTemplateName(templateName string) ([]toolsaocv1.AOCParams, error) {
-	aocParams, err := r.FindAOCParams()
+// FindObjectTemplateParamsByTemplateName find all aoc params by template name
+func (r *Common) FindObjectTemplateParamsByTemplateName(templateName string) ([]toolsaocv1.ObjectTemplateParams, error) {
+	aocParams, err := r.FindObjectTemplateParams()
 	if err != nil {
 		return nil, err
 	}
 
-	var aocParamsRet []toolsaocv1.AOCParams
+	var aocParamsRet []toolsaocv1.ObjectTemplateParams
 
 	for _, aocParam := range aocParams {
 		_, err := aocParam.Spec.GetParametersByTemplateName(templateName)
@@ -94,9 +94,9 @@ func (r *Common) FindAOCParamsByTemplateName(templateName string) ([]toolsaocv1.
 	return aocParamsRet, nil
 }
 
-// FindAOCParams find all aoc params
-func (r *Common) FindAOCParams() ([]toolsaocv1.AOCParams, error) {
-	aocParamsList := &toolsaocv1.AOCParamsList{}
+// FindObjectTemplateParams find all aoc params
+func (r *Common) FindObjectTemplateParams() ([]toolsaocv1.ObjectTemplateParams, error) {
+	aocParamsList := &toolsaocv1.ObjectTemplateParamsList{}
 	err := r.Client.List(context.Background(), aocParamsList)
 	return aocParamsList.Items, err
 }
@@ -114,7 +114,7 @@ func (r *Common) ValidateNamespace(namespace corev1.Namespace, annotations map[s
 }
 
 // GetAOCByName get aoc by name
-func (r *Common) GetAOCByName(name string) (*toolsaocv1.AutoObjectCreation, error) {
+func (r *Common) GetAOCByName(name string) (*toolsaocv1.ObjectTemplate, error) {
 	aocs, err := r.FindAOCs()
 
 	if err != nil {
@@ -131,8 +131,8 @@ func (r *Common) GetAOCByName(name string) (*toolsaocv1.AutoObjectCreation, erro
 }
 
 // FindAOCs find all AOC
-func (r *Common) FindAOCs() (aoc []toolsaocv1.AutoObjectCreation, err error) {
-	aocList := &toolsaocv1.AutoObjectCreationList{}
+func (r *Common) FindAOCs() (aoc []toolsaocv1.ObjectTemplate, err error) {
+	aocList := &toolsaocv1.ObjectTemplateList{}
 	err = r.Client.List(context.Background(), aocList)
 	aoc = aocList.Items
 

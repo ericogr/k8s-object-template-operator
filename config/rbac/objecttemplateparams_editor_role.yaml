@@ -1,13 +1,13 @@
-# permissions for end users to edit aocparams.
+# permissions for end users to edit objecttemplateparams.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: aocparams-editor-role
+  name: objecttemplateparams-editor-role
 rules:
 - apiGroups:
   - template.totvs.app.github.com
   resources:
-  - aocparams
+  - objecttemplateparams
   verbs:
   - create
   - delete
@@ -19,6 +19,6 @@ rules:
 - apiGroups:
   - template.totvs.app.github.com
   resources:
-  - aocparams/status
+  - objecttemplateparams/status
   verbs:
   - get

@@ -9,7 +9,7 @@ rules:
 - apiGroups:
   - template.totvs.app.github.com
   resources:
-  - aocparams
+  - objecttemplateparams
   verbs:
   - create
   - delete
@@ -21,7 +21,7 @@ rules:
 - apiGroups:
   - template.totvs.app.github.com
   resources:
-  - aocparams/status
+  - objecttemplateparams/status
   verbs:
   - get
   - patch
@@ -29,7 +29,7 @@ rules:
 - apiGroups:
   - template.totvs.app.github.com
   resources:
-  - autoobjectcreations
+  - objecttemplates
   verbs:
   - create
   - delete
@@ -41,7 +41,7 @@ rules:
 - apiGroups:
   - template.totvs.app.github.com
   resources:
-  - autoobjectcreations/status
+  - objecttemplates/status
   verbs:
   - get
   - patch

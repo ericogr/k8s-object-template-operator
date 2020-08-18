@@ -6,18 +6,19 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.2.5
   creationTimestamp: null
-  name: aocparams.template.totvs.app.github.com
+  name: objecttemplateparams.template.totvs.app.github.com
 spec:
   group: template.totvs.app.github.com
   names:
-    kind: AOCParams
-    listKind: AOCParamsList
-    plural: aocparams
-    singular: aocparams
+    kind: ObjectTemplateParams
+    listKind: ObjectTemplateParamsList
+    plural: objecttemplateparams
+    singular: objecttemplateparams
   scope: Namespaced
   validation:
     openAPIV3Schema:
-      description: AOCParams is the Schema for the aocparams API
+      description: ObjectTemplateParams is the Schema for the objecttemplateparams
+        API
       properties:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
@@ -32,7 +33,7 @@ spec:
         metadata:
           type: object
         spec:
-          description: AOCParamsSpec defines the desired state of AOCParams
+          description: ObjectTemplateParamsSpec defines the desired state of ObjectTemplateParams
           properties:
             templates:
               items:
@@ -52,7 +53,7 @@ spec:
           - templates
           type: object
         status:
-          description: AOCParamsStatus defines the observed state of AOCParams
+          description: ObjectTemplateParamsStatus defines the observed state of ObjectTemplateParams
           type: object
       type: object
   version: v1

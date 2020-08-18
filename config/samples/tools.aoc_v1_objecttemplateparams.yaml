@@ -1,8 +1,8 @@
 ---
 apiVersion: template.totvs.app.github.com/v1
-kind: AOCParams
+kind: ObjectTemplateParams
 metadata:
-  name: aocparams-sample
+  name: objecttemplateparams-sample
   namespace: default
 spec:
   templates:

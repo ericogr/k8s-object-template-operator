@@ -19,7 +19,7 @@ package v1
 import "errors"
 
 // GetParametersByTemplateName get parameters values by template name
-func (a *AOCParamsSpec) GetParametersByTemplateName(templateName string) (Parameters, error) {
+func (a *ObjectTemplateParamsSpec) GetParametersByTemplateName(templateName string) (Parameters, error) {
 	for _, parameter := range a.Templates {
 		if parameter.Name == templateName {
 			return parameter, nil
@@ -30,7 +30,7 @@ func (a *AOCParamsSpec) GetParametersByTemplateName(templateName string) (Parame
 }
 
 // SetValuesByName set values for specific parameter template
-func (a *AOCParamsSpec) SetValuesByName(parameterName string, values map[string]string) bool {
+func (a *ObjectTemplateParamsSpec) SetValuesByName(parameterName string, values map[string]string) bool {
 	for _, parameter := range a.Templates {
 		if parameter.Name == parameterName {
 			parameter.Values = values

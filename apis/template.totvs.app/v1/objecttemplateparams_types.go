@@ -26,35 +26,35 @@ type Parameters struct {
 	Values map[string]string `json:"values,omitempty"`
 }
 
-// AOCParamsSpec defines the desired state of AOCParams
-type AOCParamsSpec struct {
+// ObjectTemplateParamsSpec defines the desired state of ObjectTemplateParams
+type ObjectTemplateParamsSpec struct {
 	Templates []Parameters `json:"templates"`
 }
 
-// AOCParamsStatus defines the observed state of AOCParams
-type AOCParamsStatus struct {
+// ObjectTemplateParamsStatus defines the observed state of ObjectTemplateParams
+type ObjectTemplateParamsStatus struct {
 }
 
 // +kubebuilder:object:root=true
 
-// AOCParams is the Schema for the aocparams API
-type AOCParams struct {
+// ObjectTemplateParams is the Schema for the objecttemplateparams API
+type ObjectTemplateParams struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   AOCParamsSpec   `json:"spec,omitempty"`
-	Status AOCParamsStatus `json:"status,omitempty"`
+	Spec   ObjectTemplateParamsSpec   `json:"spec,omitempty"`
+	Status ObjectTemplateParamsStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// AOCParamsList contains a list of AOCParams
-type AOCParamsList struct {
+// ObjectTemplateParamsList contains a list of ObjectTemplateParams
+type ObjectTemplateParamsList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []AOCParams `json:"items"`
+	Items           []ObjectTemplateParams `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&AOCParams{}, &AOCParamsList{})
+	SchemeBuilder.Register(&ObjectTemplateParams{}, &ObjectTemplateParamsList{})
 }

@@ -66,21 +66,21 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controllers.AutoObjectCreationReconciler{
+	if err = (&controllers.ObjectTemplateReconciler{
 		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("AutoObjectCreation"),
+		Log:    ctrl.Log.WithName("controllers").WithName("ObjectTemplate"),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "AutoObjectCreation")
+		setupLog.Error(err, "unable to create controller", "controller", "ObjectTemplate")
 		os.Exit(1)
 	}
 
-	if err = (&toolsaoccontroller.AOCParamsReconciler{
+	if err = (&toolsaoccontroller.ObjectTemplateParamsReconciler{
 		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("AOCParams"),
+		Log:    ctrl.Log.WithName("controllers").WithName("ObjectTemplateParams"),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "AOCParams")
+		setupLog.Error(err, "unable to create controller", "controller", "ObjectTemplateParams")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder

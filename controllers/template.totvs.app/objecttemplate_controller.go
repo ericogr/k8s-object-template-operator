@@ -34,32 +34,32 @@ var (
 	aocGV = toolsaocv1.GroupVersion.String()
 )
 
-// AutoObjectCreationReconciler aoc reconciler
-type AutoObjectCreationReconciler struct {
+// ObjectTemplateReconciler aoc reconciler
+type ObjectTemplateReconciler struct {
 	client.Client
 	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
 // SetupWithManager setup
-func (r *AutoObjectCreationReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *ObjectTemplateReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&toolsaocv1.AutoObjectCreation{}).
+		For(&toolsaocv1.ObjectTemplate{}).
 		Complete(r)
 }
 
-// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=autoobjectcreations,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=autoobjectcreations/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=objecttemplates,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=objecttemplates/status,verbs=get;update;patch
 
 // Reconcile k8s reconcile
-func (r *AutoObjectCreationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	// if 1 > 0 {
 	// 	return ctrl.Result{}, nil
 	// }
 
 	ctx := context.Background()
-	log := r.Log.WithValues("autoobjectcreation", aocGV)
-	var aoc toolsaocv1.AutoObjectCreation
+	log := r.Log.WithValues("objecttemplate", aocGV)
+	var aoc toolsaocv1.ObjectTemplate
 	err := r.Get(ctx, req.NamespacedName, &aoc)
 
 	if err != nil {
@@ -73,7 +73,7 @@ func (r *AutoObjectCreationReconciler) Reconcile(req ctrl.Request) (ctrl.Result,
 	}
 
 	common := Common{r.Client, r.Log}
-	aocParams, err := common.FindAOCParamsByTemplateName(aoc.Spec.Template.Name)
+	aocParams, err := common.FindObjectTemplateParamsByTemplateName(aoc.Spec.Template.Name)
 	listErrors := ""
 	if err != nil {
 		listErrors = err.Error()
