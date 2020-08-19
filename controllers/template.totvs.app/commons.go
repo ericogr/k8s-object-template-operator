@@ -3,8 +3,6 @@ package controllers
 import (
 	"context"
 	"errors"
-	"strings"
-	"text/template"
 
 	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 	"github.com/go-logr/logr"
@@ -163,8 +161,8 @@ func (c *Common) GetObjectSimplified(groupversion string, kind string, namespace
 // ToObject process object from template
 func (c *Common) ToObject(template otv1.Template, values map[string]string, namespaceName string) (unstructured.Unstructured, *schema.GroupVersionKind, error) {
 	values["__namespace"] = namespaceName
-	templateYAML := c.getStrFromTemplate(template)
-	templateYAMLExecuted, err := c.executeTemplate(templateYAML, values)
+	templateYAML := getStrFromTemplate(template)
+	templateYAMLExecuted, err := executeTemplate(templateYAML, values)
 
 	if err != nil {
 		return unstructured.Unstructured{}, nil, err
@@ -185,34 +183,4 @@ func (c *Common) ToObject(template otv1.Template, values map[string]string, name
 	object.SetName(template.Name)
 
 	return object, &gvk, nil
-}
-
-// getStrFromTemplate get string from template
-func (c *Common) getStrFromTemplate(template otv1.Template) string {
-	return `
-apiVersion: ` + template.APIVersion + `
-kind: ` + template.Kind + `
-spec:
-  ` + c.addIdentation(template.Spec)
-}
-
-func (c *Common) addIdentation(str string) string {
-	return strings.ReplaceAll(str, "\n", "\n  ")
-}
-
-func (c *Common) executeTemplate(templateYAML string, values map[string]string) (string, error) {
-	template, err := template.New("template").Parse(templateYAML)
-
-	if err != nil {
-		return "", err
-	}
-
-	sb := strings.Builder{}
-	err = template.Execute(&sb, values)
-
-	if err != nil {
-		return "", err
-	}
-
-	return sb.String(), nil
 }
