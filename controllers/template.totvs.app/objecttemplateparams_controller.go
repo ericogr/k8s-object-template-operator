@@ -64,18 +64,18 @@ func (r *ObjectTemplateParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Resul
 	common := Common{r.Client, r.Log}
 
 	for _, parameter := range params.Spec.Templates {
-		aoc, err := common.GetAOCByName(parameter.Name)
+		ot, err := common.GetObjectTemplateByName(parameter.Name)
 
 		if err != nil {
-			log.Error(err, "Failed to get aoc template")
+			log.Error(err, "Failed to get object template")
 			return ctrl.Result{}, err
 		}
 
-		if aoc != nil {
-			err = common.UpdateObjectByNamespace(*aoc, req.NamespacedName.Namespace, parameter.Values)
+		if ot != nil {
+			err = common.UpdateObjectByNamespace(*ot, req.NamespacedName.Namespace, parameter.Values)
 
 			if err != nil {
-				log.Error(err, "Failed to update aoc template")
+				log.Error(err, "Failed to update object template")
 				return ctrl.Result{}, err
 			}
 		}

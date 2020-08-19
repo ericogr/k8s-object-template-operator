@@ -31,10 +31,10 @@ import (
 )
 
 var (
-	aocGV = otv1.GroupVersion.String()
+	otGV = otv1.GroupVersion.String()
 )
 
-// ObjectTemplateReconciler aoc reconciler
+// ObjectTemplateReconciler ot reconciler
 type ObjectTemplateReconciler struct {
 	client.Client
 	Log    logr.Logger
@@ -58,9 +58,9 @@ func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 	// }
 
 	ctx := context.Background()
-	log := r.Log.WithValues("objecttemplate", aocGV)
-	var aoc otv1.ObjectTemplate
-	err := r.Get(ctx, req.NamespacedName, &aoc)
+	log := r.Log.WithValues("objecttemplate", otGV)
+	var ot otv1.ObjectTemplate
+	err := r.Get(ctx, req.NamespacedName, &ot)
 
 	if err != nil {
 		if k8sErrors.IsNotFound(err) {
@@ -73,21 +73,21 @@ func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 	}
 
 	common := Common{r.Client, r.Log}
-	aocParams, err := common.FindObjectTemplateParamsByTemplateName(aoc.Spec.Template.Name)
+	otParams, err := common.FindObjectTemplateParamsByTemplateName(ot.Spec.Template.Name)
 	listErrors := ""
 	if err != nil {
 		listErrors = err.Error()
 	} else {
-		for _, aocParam := range aocParams {
-			paramNamespace := aocParam.Namespace
-			paramValues, err := aocParam.Spec.GetParametersByTemplateName(aoc.Spec.Template.Name)
+		for _, otParam := range otParams {
+			paramNamespace := otParam.Namespace
+			paramValues, err := otParam.Spec.GetParametersByTemplateName(ot.Spec.Template.Name)
 
 			if err != nil {
 				listErrors += err.Error() + "\n"
 				continue
 			}
 
-			if err := common.UpdateObjectByNamespace(aoc, paramNamespace, paramValues.Values); err != nil {
+			if err := common.UpdateObjectByNamespace(ot, paramNamespace, paramValues.Values); err != nil {
 				listErrors += err.Error() + "\n"
 				continue
 			}
@@ -96,12 +96,12 @@ func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 
 	// //https://godoc.org/sigs.k8s.io/controller-runtime/pkg/predicate#GenerationChangedPredicate
 	if listErrors != "" {
-		aoc.Status.Status = listErrors
+		ot.Status.Status = listErrors
 	} else {
-		aoc.Status.Status = "OK"
+		ot.Status.Status = "OK"
 	}
 
-	if err := r.Status().Update(ctx, &aoc); err != nil {
+	if err := r.Status().Update(ctx, &ot); err != nil {
 		log.Error(err, "Unable to update status")
 		return ctrl.Result{}, err
 	}

@@ -28,7 +28,7 @@ import (
 
 	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 	controllers "github.com/ericogr/k8s-aoc/controllers/template.totvs.app"
-	toolsaoccontroller "github.com/ericogr/k8s-aoc/controllers/template.totvs.app"
+	otc "github.com/ericogr/k8s-aoc/controllers/template.totvs.app"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -75,7 +75,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&toolsaoccontroller.ObjectTemplateParamsReconciler{
+	if err = (&otc.ObjectTemplateParamsReconciler{
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("ObjectTemplateParams"),
 		Scheme: mgr.GetScheme(),

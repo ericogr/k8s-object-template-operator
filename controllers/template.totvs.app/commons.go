@@ -22,13 +22,13 @@ type Common struct {
 }
 
 // UpdateObjectByNamespace update namespace
-func (c *Common) UpdateObjectByNamespace(aoc otv1.ObjectTemplate, namespaceName string, values map[string]string) error {
+func (c *Common) UpdateObjectByNamespace(ot otv1.ObjectTemplate, namespaceName string, values map[string]string) error {
 	ctx := context.Background()
-	log := c.Log.WithValues("objecttemplate", aocGV)
-	reference := "[" + aoc.Spec.Template.Kind + "(" + aoc.Spec.Template.Name + ")] at " + namespaceName + " namespace"
+	log := c.Log.WithValues("objecttemplate", otGV)
+	reference := "[" + ot.Spec.Template.Kind + "(" + ot.Spec.Template.Name + ")] at " + namespaceName + " namespace"
 	log.Info("Ready to process " + reference)
 
-	newObj, gvk, err := c.ToObject(aoc.Spec.Template, values, namespaceName)
+	newObj, gvk, err := c.ToObject(ot.Spec.Template, values, namespaceName)
 
 	if err != nil {
 		return errors.New("Error serializing " + reference + ": " + err.Error())
@@ -40,7 +40,7 @@ func (c *Common) UpdateObjectByNamespace(aoc otv1.ObjectTemplate, namespaceName 
 		*gvk,
 		types.NamespacedName{
 			Namespace: namespaceName,
-			Name:      aoc.Spec.Template.Name,
+			Name:      ot.Spec.Template.Name,
 		},
 	)
 
@@ -75,31 +75,31 @@ func (c *Common) UpdateObjectByNamespace(aoc otv1.ObjectTemplate, namespaceName 
 	return nil
 }
 
-// FindObjectTemplateParamsByTemplateName find all aoc params by template name
+// FindObjectTemplateParamsByTemplateName find all ot params by template name
 func (c *Common) FindObjectTemplateParamsByTemplateName(templateName string) ([]otv1.ObjectTemplateParams, error) {
-	aocParams, err := c.FindObjectTemplateParams()
+	otParams, err := c.FindObjectTemplateParams()
 	if err != nil {
 		return nil, err
 	}
 
-	var aocParamsRet []otv1.ObjectTemplateParams
+	var otParamsRet []otv1.ObjectTemplateParams
 
-	for _, aocParam := range aocParams {
-		_, err := aocParam.Spec.GetParametersByTemplateName(templateName)
+	for _, otParam := range otParams {
+		_, err := otParam.Spec.GetParametersByTemplateName(templateName)
 
 		if err == nil {
-			aocParamsRet = append(aocParamsRet, aocParam)
+			otParamsRet = append(otParamsRet, otParam)
 		}
 	}
 
-	return aocParamsRet, nil
+	return otParamsRet, nil
 }
 
-// FindObjectTemplateParams find all aoc params
+// FindObjectTemplateParams find all ot params
 func (c *Common) FindObjectTemplateParams() ([]otv1.ObjectTemplateParams, error) {
-	aocParamsList := &otv1.ObjectTemplateParamsList{}
-	err := c.Client.List(context.Background(), aocParamsList)
-	return aocParamsList.Items, err
+	otParamsList := &otv1.ObjectTemplateParamsList{}
+	err := c.Client.List(context.Background(), otParamsList)
+	return otParamsList.Items, err
 }
 
 // ValidateNamespace validate by annotations
@@ -114,28 +114,28 @@ func (c *Common) ValidateNamespace(namespace corev1.Namespace, annotations map[s
 	return
 }
 
-// GetAOCByName get aoc by name
-func (c *Common) GetAOCByName(name string) (*otv1.ObjectTemplate, error) {
-	aocs, err := c.FindAOCs()
+// GetObjectTemplateByName get object template by name
+func (c *Common) GetObjectTemplateByName(name string) (*otv1.ObjectTemplate, error) {
+	ots, err := c.FindObjectTemplates()
 
 	if err != nil {
 		return nil, err
 	}
 
-	for _, aoc := range aocs {
-		if aoc.Spec.Template.Name == name {
-			return &aoc, nil
+	for _, ot := range ots {
+		if ot.Spec.Template.Name == name {
+			return &ot, nil
 		}
 	}
 
 	return nil, nil
 }
 
-// FindAOCs find all AOC
-func (c *Common) FindAOCs() (aoc []otv1.ObjectTemplate, err error) {
-	aocList := &otv1.ObjectTemplateList{}
-	err = c.Client.List(context.Background(), aocList)
-	aoc = aocList.Items
+// FindObjectTemplates find all object templates
+func (c *Common) FindObjectTemplates() (ots []otv1.ObjectTemplate, err error) {
+	otList := &otv1.ObjectTemplateList{}
+	err = c.Client.List(context.Background(), otList)
+	ots = otList.Items
 
 	return
 }
