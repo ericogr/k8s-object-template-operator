@@ -26,6 +26,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 )
@@ -45,6 +46,7 @@ type ObjectTemplateReconciler struct {
 func (r *ObjectTemplateReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&otv1.ObjectTemplate{}).
+		WithEventFilter(predicate.GenerationChangedPredicate{}).
 		Complete(r)
 }
 
@@ -53,10 +55,6 @@ func (r *ObjectTemplateReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 // Reconcile k8s reconcile
 func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	// if 1 > 0 {
-	// 	return ctrl.Result{}, nil
-	// }
-
 	ctx := context.Background()
 	log := r.Log.WithValues("objecttemplate", otGV)
 	var ot otv1.ObjectTemplate
@@ -87,14 +85,13 @@ func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 				continue
 			}
 
-			if err := common.UpdateObjectByNamespace(ot, paramNamespace, paramValues.Values); err != nil {
+			if err := common.UpdateObjectByTemplate(ot, paramNamespace, paramValues.Values); err != nil {
 				listErrors += err.Error() + "\n"
 				continue
 			}
 		}
 	}
 
-	// //https://godoc.org/sigs.k8s.io/controller-runtime/pkg/predicate#GenerationChangedPredicate
 	if listErrors != "" {
 		ot.Status.Status = listErrors
 	} else {
@@ -102,9 +99,11 @@ func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 	}
 
 	if err := r.Status().Update(ctx, &ot); err != nil {
-		log.Error(err, "Unable to update status")
+		log.Error(err, "Unable to update ObjectTemplate status")
 		return ctrl.Result{}, err
 	}
 
-	return ctrl.Result{}, nil
+	log.Info("ObjectTemplate finished ok")
+
+	return ctrl.Result{Requeue: false}, nil
 }

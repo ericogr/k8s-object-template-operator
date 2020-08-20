@@ -25,6 +25,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 )
@@ -38,6 +39,14 @@ type ObjectTemplateParamsReconciler struct {
 	client.Client
 	Log    logr.Logger
 	Scheme *runtime.Scheme
+}
+
+// SetupWithManager setup
+func (r *ObjectTemplateParamsReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	return ctrl.NewControllerManagedBy(mgr).
+		For(&otv1.ObjectTemplateParams{}).
+		WithEventFilter(predicate.GenerationChangedPredicate{}).
+		Complete(r)
 }
 
 // +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=objecttemplateparams,verbs=get;list;watch;create;update;patch;delete
@@ -72,7 +81,7 @@ func (r *ObjectTemplateParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Resul
 		}
 
 		if ot != nil {
-			err = common.UpdateObjectByNamespace(*ot, req.NamespacedName.Namespace, parameter.Values)
+			err = common.UpdateObjectByTemplate(*ot, req.NamespacedName.Namespace, parameter.Values)
 
 			if err != nil {
 				log.Error(err, "Failed to update object template")
@@ -82,11 +91,4 @@ func (r *ObjectTemplateParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Resul
 	}
 
 	return ctrl.Result{}, nil
-}
-
-// SetupWithManager setup
-func (r *ObjectTemplateParamsReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	return ctrl.NewControllerManagedBy(mgr).
-		For(&otv1.ObjectTemplateParams{}).
-		Complete(r)
 }

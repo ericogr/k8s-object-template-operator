@@ -23,7 +23,7 @@ type Common struct {
 }
 
 // UpdateObjectByNamespace update namespace
-func (c *Common) UpdateObjectByNamespace(ot otv1.ObjectTemplate, namespaceName string, values map[string]string) error {
+func (c *Common) UpdateObjectByTemplate(ot otv1.ObjectTemplate, namespaceName string, values map[string]string) error {
 	ctx := context.Background()
 	log := c.Log.WithValues("objecttemplate", otGV)
 	reference := "[" + ot.Spec.Template.Kind + "(" + ot.Spec.Template.Name + ")] at " + namespaceName + " namespace"
