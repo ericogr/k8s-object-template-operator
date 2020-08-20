@@ -16,7 +16,9 @@ limitations under the License.
 
 package v1
 
-import "errors"
+import (
+	"fmt"
+)
 
 // GetParametersByTemplateName get parameters values by template name
 func (a *ObjectTemplateParamsSpec) GetParametersByTemplateName(templateName string) (Parameters, error) {
@@ -26,7 +28,7 @@ func (a *ObjectTemplateParamsSpec) GetParametersByTemplateName(templateName stri
 		}
 	}
 
-	return Parameters{}, errors.New("parameter " + templateName + " not found")
+	return Parameters{}, fmt.Errorf("parameter %v not found", templateName)
 }
 
 // SetValuesByName set values for specific parameter template

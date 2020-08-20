@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 	"github.com/go-logr/logr"
@@ -26,15 +27,14 @@ func (c *Common) UpdateObjectByNamespace(ot otv1.ObjectTemplate, namespaceName s
 	ctx := context.Background()
 	log := c.Log.WithValues("objecttemplate", otGV)
 	reference := "[" + ot.Spec.Template.Kind + "(" + ot.Spec.Template.Name + ")] at " + namespaceName + " namespace"
-	log.Info("Ready to process " + reference)
+	log.Info(fmt.Sprintf("Ready to process %v", reference))
 
 	newObj, gvk, err := c.ToObject(ot.Spec.Template, values, namespaceName)
 
 	if err != nil {
 		return errors.New("Error serializing " + reference + ": " + err.Error())
 	}
-
-	log.Info("Object encoded succefully " + reference)
+	log.Info(fmt.Sprintf("Object encoded succefully %v", reference))
 
 	findObj, err := c.GetObject(
 		*gvk,
@@ -49,13 +49,13 @@ func (c *Common) UpdateObjectByNamespace(ot otv1.ObjectTemplate, namespaceName s
 	// })
 
 	if err != nil && k8sErrors.IsNotFound(err) {
-		log.Info("Creating new object " + reference)
+		log.Info(fmt.Sprintf("Creating new object %v", reference))
 		err := c.Client.Create(ctx, &newObj)
 
 		if err == nil {
-			log.Info("Create succefully " + reference)
+			log.Info(fmt.Sprintf("Create succefully %v", reference))
 		} else {
-			return errors.New("Error creating object " + reference + ": " + err.Error())
+			return fmt.Errorf("Error creating object %v: %v", reference, err.Error())
 		}
 	} else {
 		if err == nil {
@@ -63,12 +63,12 @@ func (c *Common) UpdateObjectByNamespace(ot otv1.ObjectTemplate, namespaceName s
 			err := c.Client.Update(ctx, &findObj)
 
 			if err == nil {
-				log.Info("Update succefully " + reference)
+				log.Info(fmt.Sprintf("Update succefully %v", reference))
 			} else {
-				return errors.New("Error updating object " + reference + ": " + err.Error())
+				return fmt.Errorf("Error updating object %v: %v", reference, err.Error())
 			}
 		} else {
-			return errors.New("Error getting object " + reference + ": " + err.Error())
+			return fmt.Errorf("Error getting object %v: %v", reference, err.Error())
 		}
 	}
 
