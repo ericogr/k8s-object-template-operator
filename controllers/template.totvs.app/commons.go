@@ -65,6 +65,8 @@ func (c *Common) UpdateObjectByTemplate(ot otv1.ObjectTemplate, namespaceName st
 	} else {
 		if err == nil {
 			findObj.Object["spec"] = newObj.Object["spec"]
+			findObj.SetLabels(newObj.GetLabels())
+			findObj.SetAnnotations(newObj.GetAnnotations())
 			err := c.Client.Update(ctx, &findObj)
 
 			if err == nil {
@@ -186,6 +188,8 @@ func (c *Common) ToObject(template otv1.Template, values map[string]string, name
 	object.SetNamespace(namespaceName)
 	object.SetGroupVersionKind(gvk)
 	object.SetName(template.Name)
+	object.SetLabels(template.Metadata.Labels)
+	object.SetAnnotations(template.Metadata.Annotations)
 
 	return object, &gvk, nil
 }

@@ -8,6 +8,13 @@ spec:
     name: prometheus-rules-default
     kind: PrometheusRule
     apiVersion: monitoring.coreos.com/v1
+    metadata:
+      labels:
+        chave1: valor1
+        chave2: valor2
+      annotations:
+        chave1a: valor1a
+        chave2a: valor2a
     spec: |-
       groups:
       - name: pods
