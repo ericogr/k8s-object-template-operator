@@ -20,7 +20,7 @@ import (
 	"strings"
 	"text/template"
 
-	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
+	otv1 "github.com/ericogr/k8s-object-template/apis/template.totvs.app/v1"
 )
 
 func getStrFromTemplate(template otv1.Template) string {

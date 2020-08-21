@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
+	otv1 "github.com/ericogr/k8s-object-template/apis/template.totvs.app/v1"
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"

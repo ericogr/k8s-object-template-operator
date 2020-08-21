@@ -1,4 +1,4 @@
-module github.com/ericogr/k8s-aoc
+module github.com/ericogr/k8s-object-template
 
 go 1.13
 

@@ -1,6 +1,6 @@
 domain: github.com
 multigroup: true
-repo: github.com/ericogr/k8s-aoc
+repo: github.com/ericogr/k8s-object-template
 resources:
 - group: template.totvs.app
   kind: ObjectTemplate

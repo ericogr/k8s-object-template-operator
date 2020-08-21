@@ -26,9 +26,9 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
-	controllers "github.com/ericogr/k8s-aoc/controllers/template.totvs.app"
-	otc "github.com/ericogr/k8s-aoc/controllers/template.totvs.app"
+	otv1 "github.com/ericogr/k8s-object-template/apis/template.totvs.app/v1"
+	controllers "github.com/ericogr/k8s-object-template/controllers/template.totvs.app"
+	otc "github.com/ericogr/k8s-object-template/controllers/template.totvs.app"
 	// +kubebuilder:scaffold:imports
 )
 
