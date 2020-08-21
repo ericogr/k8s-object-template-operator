@@ -8,6 +8,10 @@ metadata:
   creationTimestamp: null
   name: objecttemplateparams.template.totvs.app.github.com
 spec:
+  additionalPrinterColumns:
+  - JSONPath: .status.status
+    name: status
+    type: string
   group: template.totvs.app.github.com
   names:
     kind: ObjectTemplateParams
@@ -15,6 +19,8 @@ spec:
     plural: objecttemplateparams
     singular: objecttemplateparams
   scope: Namespaced
+  subresources:
+    status: {}
   validation:
     openAPIV3Schema:
       description: ObjectTemplateParams is the Schema for the objecttemplateparams
@@ -54,6 +60,11 @@ spec:
           type: object
         status:
           description: ObjectTemplateParamsStatus defines the observed state of ObjectTemplateParams
+          properties:
+            status:
+              type: string
+          required:
+          - status
           type: object
       type: object
   version: v1

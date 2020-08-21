@@ -55,12 +55,16 @@ func (r *ObjectTemplateParamsReconciler) SetupWithManager(mgr ctrl.Manager) erro
 // Reconcile reconcile
 func (r *ObjectTemplateParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
-	log := r.Log.WithValues("objecttemplateparams", req.NamespacedName)
-	var params otv1.ObjectTemplateParams
+	log := r.Log.WithValues("objecttemplateparams", otGV)
+	var otp otv1.ObjectTemplateParams
+	err := r.Get(ctx, req.NamespacedName, &otp)
+	common := Common{r.Client, r.Log}
 
-	err := r.Get(ctx, req.NamespacedName, &params)
+	defer common.UpdateStatus(ctx, &otp)
 
 	if err != nil {
+		otp.Status.Status = err.Error()
+
 		if k8sErrors.IsNotFound(err) {
 			// Object not found, return. Created objects are automatically garbage collected
 			return ctrl.Result{}, nil
@@ -70,25 +74,29 @@ func (r *ObjectTemplateParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Resul
 		return ctrl.Result{}, err
 	}
 
-	common := Common{r.Client, r.Log}
-
-	for _, parameter := range params.Spec.Templates {
+	lu := LogUtil{Log: log}
+	for _, parameter := range otp.Spec.Templates {
 		ot, err := common.GetObjectTemplateByName(parameter.Name)
 
 		if err != nil {
-			log.Error(err, "Failed to get object template")
-			return ctrl.Result{}, err
+			lu.Error(err, "Failed to get object template")
+			continue
 		}
 
 		if ot != nil {
 			err = common.UpdateObjectByTemplate(*ot, req.NamespacedName.Namespace, parameter.Values)
 
 			if err != nil {
-				log.Error(err, "Failed to update object template")
-				return ctrl.Result{}, err
+				lu.Error(err, "Failed to update object template")
+				continue
 			}
 		}
 	}
 
-	return ctrl.Result{}, nil
+	otp.Status.Status = "OK"
+	if lu.HasError() {
+		otp.Status.Status = lu.AllErrorsMessages()
+	}
+
+	return ctrl.Result{Requeue: false}, nil
 }

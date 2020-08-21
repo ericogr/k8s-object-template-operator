@@ -31,10 +31,6 @@ import (
 	otv1 "github.com/ericogr/k8s-aoc/apis/template.totvs.app/v1"
 )
 
-var (
-	otGV = otv1.GroupVersion.String()
-)
-
 // ObjectTemplateReconciler ot reconciler
 type ObjectTemplateReconciler struct {
 	client.Client
@@ -59,8 +55,13 @@ func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 	log := r.Log.WithValues("objecttemplate", otGV)
 	var ot otv1.ObjectTemplate
 	err := r.Get(ctx, req.NamespacedName, &ot)
+	common := Common{r.Client, log}
+
+	defer common.UpdateStatus(ctx, &ot)
 
 	if err != nil {
+		ot.Status.Status = err.Error()
+
 		if k8sErrors.IsNotFound(err) {
 			// Object not found, return. Created objects are automatically garbage collected
 			return ctrl.Result{}, nil
@@ -70,40 +71,33 @@ func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 		return ctrl.Result{}, err
 	}
 
-	common := Common{r.Client, r.Log}
 	otParams, err := common.FindObjectTemplateParamsByTemplateName(ot.Spec.Template.Name)
-	listErrors := ""
+
 	if err != nil {
-		listErrors = err.Error()
-	} else {
-		for _, otParam := range otParams {
-			paramNamespace := otParam.Namespace
-			paramValues, err := otParam.Spec.GetParametersByTemplateName(ot.Spec.Template.Name)
-
-			if err != nil {
-				listErrors += err.Error() + "\n"
-				continue
-			}
-
-			if err := common.UpdateObjectByTemplate(ot, paramNamespace, paramValues.Values); err != nil {
-				listErrors += err.Error() + "\n"
-				continue
-			}
-		}
-	}
-
-	if listErrors != "" {
-		ot.Status.Status = listErrors
-	} else {
-		ot.Status.Status = "OK"
-	}
-
-	if err := r.Status().Update(ctx, &ot); err != nil {
-		log.Error(err, "Unable to update ObjectTemplate status")
+		ot.Status.Status = err.Error()
 		return ctrl.Result{}, err
 	}
 
-	log.Info("ObjectTemplate finished ok")
+	lu := LogUtil{Log: log}
+	for _, otParam := range otParams {
+		paramNamespace := otParam.Namespace
+		paramValues, err := otParam.Spec.GetParametersByTemplateName(ot.Spec.Template.Name)
+
+		if err != nil {
+			lu.Error(err, "Error getting parameters by template name")
+			continue
+		}
+
+		if err := common.UpdateObjectByTemplate(ot, paramNamespace, paramValues.Values); err != nil {
+			lu.Error(err, "Failed to update ObjectTemplate")
+			continue
+		}
+	}
+
+	ot.Status.Status = "OK"
+	if lu.HasError() {
+		ot.Status.Status = lu.AllErrorsMessages()
+	}
 
 	return ctrl.Result{Requeue: false}, nil
 }

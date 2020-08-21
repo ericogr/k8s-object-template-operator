@@ -33,9 +33,12 @@ type ObjectTemplateParamsSpec struct {
 
 // ObjectTemplateParamsStatus defines the observed state of ObjectTemplateParams
 type ObjectTemplateParamsStatus struct {
+	Status string `json:"status"`
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:printcolumn:name="status",type=string,JSONPath=`.status.status`
+// +kubebuilder:subresource:status
 
 // ObjectTemplateParams is the Schema for the objecttemplateparams API
 type ObjectTemplateParams struct {

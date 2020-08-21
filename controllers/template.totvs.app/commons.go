@@ -10,10 +10,15 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+)
+
+var (
+	otGV = otv1.GroupVersion.String()
 )
 
 // Common common controllers things
@@ -22,7 +27,7 @@ type Common struct {
 	Log logr.Logger
 }
 
-// UpdateObjectByNamespace update namespace
+// UpdateObjectByTemplate update namespace
 func (c *Common) UpdateObjectByTemplate(ot otv1.ObjectTemplate, namespaceName string, values map[string]string) error {
 	ctx := context.Background()
 	log := c.Log.WithValues("objecttemplate", otGV)
@@ -183,4 +188,11 @@ func (c *Common) ToObject(template otv1.Template, values map[string]string, name
 	object.SetName(template.Name)
 
 	return object, &gvk, nil
+}
+
+// UpdateStatus update object status
+func (c *Common) UpdateStatus(ctx context.Context, obj runtime.Object) {
+	if err := c.Status().Update(ctx, obj); err != nil {
+		c.Log.Error(err, fmt.Sprintf("Unable to update %v status", obj.GetObjectKind().GroupVersionKind()))
+	}
 }
