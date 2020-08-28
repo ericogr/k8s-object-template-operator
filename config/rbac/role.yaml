@@ -7,17 +7,7 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-  - monitoring.coreos.com
-  resources:
-  - prometheusrules
-  verbs:
-  - create
-  - get
-  - list
-  - patch
-  - update
-- apiGroups:
-  - template.totvs.app.github.com
+  - template.ericogr.github.com
   resources:
   - objecttemplateparams
   verbs:
@@ -29,7 +19,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - template.totvs.app.github.com
+  - template.ericogr.github.com
   resources:
   - objecttemplateparams/status
   verbs:
@@ -37,7 +27,7 @@ rules:
   - patch
   - update
 - apiGroups:
-  - template.totvs.app.github.com
+  - template.ericogr.github.com
   resources:
   - objecttemplates
   verbs:
@@ -49,7 +39,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - template.totvs.app.github.com
+  - template.ericogr.github.com
   resources:
   - objecttemplates/status
   verbs:

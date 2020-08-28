@@ -1,5 +1,5 @@
 ---
-apiVersion: template.totvs.app.github.com/v1
+apiVersion: template.ericogr.github.com/v1
 kind: ObjectTemplateParams
 metadata:
   name: objecttemplateparams-sample
@@ -8,5 +8,5 @@ spec:
   templates:
   - name: prometheus-rules-default
     values:
-      totvsapp_slack_channel: '#integracao-hube-alerts'
-      totvsapp_app: hube
+      app_slack_channel: '#integracao-hube-alerts'
+      app_app: hube

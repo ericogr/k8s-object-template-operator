@@ -1,5 +1,5 @@
 ---
-apiVersion: template.totvs.app.github.com/v1
+apiVersion: template.ericogr.github.com/v1
 kind: ObjectTemplate
 metadata:
   name: objecttemplate-sample
@@ -26,7 +26,7 @@ spec:
           expr: sum by(pod) (kube_pod_status_ready{namespace="{{ .__namespace }}"} == 0) != 0
           for: 10m
           labels:
-            totvsapp_app: {{ .totvsapp_app }}
-            totvsapp_route: slack
-            totvsapp_severity: critical
-            totvsapp_slack_channel: '{{ .totvsapp_slack_channel }}'
+            app_app: {{ .app_app }}
+            app_route: slack
+            app_severity: critical
+            app_slack_channel: '{{ .app_slack_channel }}'

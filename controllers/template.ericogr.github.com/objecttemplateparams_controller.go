@@ -27,7 +27,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
-	otv1 "github.com/ericogr/k8s-object-template/apis/template.totvs.app/v1"
+	otv1 "github.com/ericogr/k8s-object-template/apis/template.ericogr.github.com/v1"
 )
 
 var (
@@ -49,8 +49,8 @@ func (r *ObjectTemplateParamsReconciler) SetupWithManager(mgr ctrl.Manager) erro
 		Complete(r)
 }
 
-// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=objecttemplateparams,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=template.totvs.app.github.com,resources=objecttemplateparams/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=template.ericogr.github.com,resources=objecttemplateparams,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=template.ericogr.github.com,resources=objecttemplateparams/status,verbs=get;update;patch
 
 // Reconcile reconcile
 func (r *ObjectTemplateParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {

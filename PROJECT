@@ -2,10 +2,10 @@ domain: github.com
 multigroup: true
 repo: github.com/ericogr/k8s-object-template
 resources:
-- group: template.totvs.app
+- group: template.ericogr.github.com
   kind: ObjectTemplate
   version: v1
-- group: template.totvs.app
+- group: template.ericogr.github.com
   kind: ObjectTemplateParams
   version: v1
 version: "2"

@@ -6,13 +6,13 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.2.5
   creationTimestamp: null
-  name: objecttemplates.template.totvs.app.github.com
+  name: objecttemplates.template.ericogr.github.com
 spec:
   additionalPrinterColumns:
   - JSONPath: .status.status
     name: status
     type: string
-  group: template.totvs.app.github.com
+  group: template.ericogr.github.com
   names:
     kind: ObjectTemplate
     listKind: ObjectTemplateList

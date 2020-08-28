@@ -2,10 +2,9 @@ package controllers
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
-	otv1 "github.com/ericogr/k8s-object-template/apis/template.totvs.app/v1"
+	otv1 "github.com/ericogr/k8s-object-template/apis/template.ericogr.github.com/v1"
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
@@ -31,13 +30,13 @@ type Common struct {
 func (c *Common) UpdateObjectByTemplate(ot otv1.ObjectTemplate, namespaceName string, values map[string]string) error {
 	ctx := context.Background()
 	log := c.Log.WithValues("objecttemplate", otGV)
-	reference := "[" + ot.Spec.Template.Kind + "(" + ot.Spec.Template.Name + ")] at " + namespaceName + " namespace"
+	reference := fmt.Sprintf("[%v(%v)] at %v namespace", ot.Spec.Template.Kind, ot.Spec.Template.Name, namespaceName)
 	log.Info(fmt.Sprintf("Ready to process %v", reference))
 
 	newObj, gvk, err := c.ToObject(ot.Spec.Template, values, namespaceName)
 
 	if err != nil {
-		return errors.New("Error serializing " + reference + ": " + err.Error())
+		return fmt.Errorf("Error serializing %v: %v", reference, err.Error())
 	}
 	log.Info(fmt.Sprintf("Object encoded succefully %v", reference))
 
@@ -167,9 +166,9 @@ func (c *Common) GetObjectSimplified(groupversion string, kind string, namespace
 
 // ToObject process object from template
 func (c *Common) ToObject(template otv1.Template, values map[string]string, namespaceName string) (unstructured.Unstructured, *schema.GroupVersionKind, error) {
-	values["__namespace"] = namespaceName
-	templateYAML := getStrFromTemplate(template)
-	templateYAMLExecuted, err := executeTemplate(templateYAML, values)
+	templateValues := c.addEnvironmentVariablesToMap(values, template, namespaceName)
+	templateYAML := getStringObject(template.APIVersion, template.Kind, template.Spec)
+	templateYAMLExecuted, err := executeTemplate(templateYAML, templateValues)
 
 	if err != nil {
 		return unstructured.Unstructured{}, nil, err
@@ -199,4 +198,25 @@ func (c *Common) UpdateStatus(ctx context.Context, obj runtime.Object) {
 	if err := c.Status().Update(ctx, obj); err != nil {
 		c.Log.Error(err, fmt.Sprintf("Unable to update %v status", obj.GetObjectKind().GroupVersionKind()))
 	}
+}
+
+func (c *Common) addEnvironmentVariablesToMap(values map[string]string, template otv1.Template, namespaceName string) map[string]string {
+	newMap := copyMap(values)
+
+	newMap["__namespace"] = namespaceName
+	newMap["__apiVersion"] = template.APIVersion
+	newMap["__kind"] = template.Kind
+	newMap["__name"] = template.Name
+
+	return newMap
+}
+
+func copyMap(values map[string]string) map[string]string {
+	newMap := make(map[string]string)
+
+	for k, v := range values {
+		newMap[k] = v
+	}
+
+	return newMap
 }

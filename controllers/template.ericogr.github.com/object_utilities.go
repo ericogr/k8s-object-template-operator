@@ -19,19 +19,26 @@ package controllers
 import (
 	"strings"
 	"text/template"
-
-	otv1 "github.com/ericogr/k8s-object-template/apis/template.totvs.app/v1"
 )
 
-func getStrFromTemplate(template otv1.Template) string {
-	return `
-apiVersion: ` + template.APIVersion + `
-kind: ` + template.Kind + `
-spec:
-  ` + addIdentation(template.Spec)
+func getStringObject(apiVersion string, kind string, spec string) string {
+	sb := strings.Builder{}
+
+	sb.WriteString("---\n")
+	sb.WriteString("apiVersion: ")
+	sb.WriteString(apiVersion)
+	sb.WriteRune('\n')
+	sb.WriteString("kind: ")
+	sb.WriteString(kind)
+	sb.WriteRune('\n')
+	sb.WriteString("spec:\n")
+	sb.WriteString(addIdentation(spec))
+
+	return sb.String()
 }
 
 func addIdentation(str string) string {
+	str = "  " + str
 	return strings.ReplaceAll(str, "\n", "\n  ")
 }
 

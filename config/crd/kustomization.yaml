@@ -2,8 +2,8 @@
 # since it depends on service name and namespace that are out of this kustomize package.
 # It should be run by config/default
 resources:
-- bases/template.totvs.app.github.com_objecttemplates.yaml
-- bases/template.totvs.app.github.com_objecttemplateparams.yaml
+- bases/template.ericogr.github.com_objecttemplates.yaml
+- bases/template.ericogr.github.com_objecttemplateparams.yaml
 # +kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:

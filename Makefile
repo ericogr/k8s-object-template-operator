@@ -38,6 +38,11 @@ deploy: manifests
 	cd config/manager && kustomize edit set image controller=${IMG}
 	kustomize build config/default | kubectl apply -f -
 
+# generate all specs in one folder
+generate-specs:
+	cd config/manager && kustomize edit set image controller=${IMG}
+	kustomize build config/default>specs/object-template-operator.yaml
+
 # Generate manifests e.g. CRD, RBAC etc.
 manifests: controller-gen
 	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
@@ -62,6 +67,9 @@ docker-build: test
 docker-push:
 	docker push ${IMG}
 
+security: gosec
+	gosec ./...
+
 # find or download controller-gen
 # download controller-gen if necessary
 controller-gen:
@@ -77,4 +85,21 @@ ifeq (, $(shell which controller-gen))
 CONTROLLER_GEN=$(GOBIN)/controller-gen
 else
 CONTROLLER_GEN=$(shell which controller-gen)
+endif
+
+# find or download controller-gen
+# download controller-gen if necessary
+gosec:
+ifeq (, $(shell which gosec))
+	@{ \
+	set -e ;\
+	GOSEC_TMP_DIR=$$(mktemp -d) ;\
+	cd $$GOSEC_TMP_DIR ;\
+	go mod init tmp ;\
+	go get github.com/securego/gosec/v2/cmd/gosec@v2.4.0 ;\
+	rm -rf $$GOSEC_TMP_DIR ;\
+	}
+GOSEC=$(GOBIN)/gosec
+else
+GOSEC=$(shell which gosec)
 endif
