@@ -1,4 +1,4 @@
-# K8S Object Template Operator [![CircleCI](https://circleci.com/gh/ericogr/k8s-object-template.svg?style=svg)](https://circleci.com/gh/ericogr/k8s-object-template)
+# K8S Object Template Operator [![CircleCI](https://circleci.com/gh/ericogr/k8s-object-template-operator.svg?style=svg)](https://circleci.com/gh/ericogr/k8s-object-template-operator)
 This operator can be used to create any kubernetes object dynamically. Create your models and set parameters to create new objects.
 
 ## Use case
