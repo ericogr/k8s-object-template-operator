@@ -26,7 +26,7 @@ spec:
           expr: sum by(pod) (kube_pod_status_ready{namespace="{{ .__namespace }}"} == 0) != 0
           for: 10m
           labels:
-            app_app: {{ .app_app }}
+            app_name: {{ .app_name }}
             app_route: slack
             app_severity: critical
             app_slack_channel: '{{ .app_slack_channel }}'

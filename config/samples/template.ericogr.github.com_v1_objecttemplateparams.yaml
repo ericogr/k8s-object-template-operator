@@ -8,5 +8,5 @@ spec:
   templates:
   - name: prometheus-rules-default
     values:
-      app_slack_channel: '#integracao-hube-alerts'
-      app_app: hube
+      app_name: myapp
+      app_slack_channel: '#slack-channel'
