@@ -6,7 +6,7 @@ metadata:
   namespace: default
 spec:
   templates:
-  - name: prometheus-rules-default
+  - name: objecttemplate-prometheus-rules-default
     values:
       app_name: myapp
       app_slack_channel: '#slack-channel'

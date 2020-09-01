@@ -2,11 +2,11 @@
 apiVersion: template.ericogr.github.com/v1
 kind: ObjectTemplate
 metadata:
-  name: objecttemplate-sample
+  name: objecttemplate-prometheus-rules-default
 spec:
-  template:
-    name: prometheus-rules-default
-    kind: PrometheusRule
+  description: Default prometheus rule
+  objects:
+  - kind: PrometheusRule
     apiVersion: monitoring.coreos.com/v1
     metadata:
       labels:
@@ -15,6 +15,7 @@ spec:
       annotations:
         chave1a: valor1a
         chave2a: valor2a
+    name: prometheus-rule-default
     spec: |-
       groups:
       - name: pods

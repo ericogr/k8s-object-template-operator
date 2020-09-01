@@ -26,18 +26,19 @@ type Metadata struct {
 	Annotations map[string]string `json:"annotations,omitempty"`
 }
 
-// Template defines template for spec creation
-type Template struct {
-	Name       string   `json:"name"`
+// Object defines a single object to be created
+type Object struct {
 	Kind       string   `json:"kind"`
 	APIVersion string   `json:"apiVersion"`
 	Metadata   Metadata `json:"metadata,omitempty"`
+	Name       string   `json:"name"`
 	Spec       string   `json:"spec"`
 }
 
 // ObjectTemplateSpec defines the desired state of ObjectTemplate
 type ObjectTemplateSpec struct {
-	Template Template `json:"template"`
+	Description string   `json:"description,omitempty"`
+	Objects     []Object `json:"objects"`
 }
 
 // ObjectTemplateStatus defines the observed state of ObjectTemplate

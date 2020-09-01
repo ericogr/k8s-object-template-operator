@@ -68,7 +68,7 @@ docker-push:
 	docker push ${IMG}
 
 security: gosec
-	gosec ./...
+	gosec . controllers/template.ericogr.github.com apis/template.ericogr.github.com/v1/
 
 # find or download controller-gen
 # download controller-gen if necessary

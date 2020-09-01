@@ -7,14 +7,79 @@ Many kubernetes clusters are shared among many applications and teams. Sometimes
 Use this operator can create these kubernete objects based on templates and simple namespaced parameters. You can give permissions to user create parameters but hide templates and created objects from developers / users using the Kubernetes RBAC system.
 
 ## New Custom Resource Definitions (CRD's)
-We have two CRD's: [ObjectTemplate](config/crd/bases/template.ericogr.github.com_objecttemplates.yaml) and [ObjectTemplateParameters](config/crd/bases/template.ericogr.template.ericogr.github.com_objecttemplateparams.yaml).
+We have two CRD's: [ObjectTemplate](config/crd/bases/template.ericogr.github.com_objecttemplates.yaml) and [ObjectTemplateParameters](config/crd/bases/template.ericogr.github.com_objecttemplateparams.yaml).
 
 **ObjectTemplate (cluster scope):** used as model to create objects in namespaces (can be used by k8s admins)
 
 **ObjectTemplateParameters (namespaced):** used as model parameters to create objects in their namespace (can be used by k8s users/devs)
 
+## Additionals Kubernetes Roles
+This operator must be allowed to create kubernetes objects, it needs more permission than defaults. The ClusterRole ```k8s-ot-manager-role``` can be used to add the new permissions as necessary.
+
+See this example to add PrometheusRules permission to this operator:
+
+```yaml
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: k8s-ot-manager-role
+rules:
+- apiGroups:
+  - monitoring.coreos.com
+  resources:
+  - prometheusrules
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+- apiGroups:
+  - template.ericogr.github.com
+  resources:
+  - objecttemplateparams
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - template.ericogr.github.com
+  resources:
+  - objecttemplateparams/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - template.ericogr.github.com
+  resources:
+  - objecttemplates
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - template.ericogr.github.com
+  resources:
+  - objecttemplates/status
+  verbs:
+  - get
+  - patch
+  - update
+```
+
 ## Basic Template Substitution System
-You can use sintax like ```{{ .variable }}``` to replace parameters. Let's say you create ```app_name: myapp```. You can use {{ .app_name }} inside spec template to be replaced in runtime by this controller.
+You can use sintax like ```{{ .variable }}``` to replace parameters. Let's say you create ```app_name: myapp```. You can use ```{{ .app_name }}``` inside spec template to be replaced in runtime by this controller. If you need to scape braces, use ```{{"{{anything}}"}}```
 
 ### System Runtime Variables
 
@@ -27,16 +92,16 @@ You can use sintax like ```{{ .variable }}``` to replace parameters. Let's say y
 
 **Template example**
 
-```sh
+```yaml
 ---
 apiVersion: template.ericogr.github.com/v1
 kind: ObjectTemplate
 metadata:
-  name: objecttemplate-sample
+  name: objecttemplate-prometheus-rules-default
 spec:
-  template:
-    name: prometheus-rules-default
-    kind: PrometheusRule
+  description: Default prometheus rule
+  objects:
+  - kind: PrometheusRule
     apiVersion: monitoring.coreos.com/v1
     metadata:
       labels:
@@ -45,6 +110,7 @@ spec:
       annotations:
         chave1a: valor1a
         chave2a: valor2a
+    name: prometheus-rule-default
     spec: |-
       groups:
       - name: pods
@@ -56,17 +122,16 @@ spec:
           expr: sum by(pod) (kube_pod_status_ready{namespace="{{ .__namespace }}"} == 0) != 0
           for: 10m
           labels:
-            app_app: {{ .app_app }}
+            app_name: {{ .app_name }}
             app_route: slack
             app_severity: critical
             app_slack_channel: '{{ .app_slack_channel }}'
-
- ```
+```
 
  **Parameters example**
 
- ```sh
- ---
+```yaml
+---
 apiVersion: template.ericogr.github.com/v1
 kind: ObjectTemplateParams
 metadata:
@@ -74,8 +139,8 @@ metadata:
   namespace: default
 spec:
   templates:
-  - name: prometheus-rules-default
+  - name: objecttemplate-prometheus-rules-default
     values:
+      app_name: myapp
       app_slack_channel: '#slack-channel'
-      app_app: myapp
  ```

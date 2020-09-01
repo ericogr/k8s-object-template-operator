@@ -71,7 +71,7 @@ func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 		return ctrl.Result{}, err
 	}
 
-	otParams, err := common.FindObjectTemplateParamsByTemplateName(ot.Spec.Template.Name)
+	otParams, err := common.FindObjectTemplateParamsByTemplateName(ot.Name)
 
 	if err != nil {
 		ot.Status.Status = err.Error()
@@ -81,14 +81,14 @@ func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 	lu := LogUtil{Log: log}
 	for _, otParam := range otParams {
 		paramNamespace := otParam.Namespace
-		paramValues, err := otParam.Spec.GetParametersByTemplateName(ot.Spec.Template.Name)
+		paramValues, err := otParam.Spec.GetParametersByTemplateName(ot.Name)
 
 		if err != nil {
 			lu.Error(err, "Error getting parameters by template name")
 			continue
 		}
 
-		if err := common.UpdateObjectByTemplate(ot, paramNamespace, paramValues.Values); err != nil {
+		if err := common.UpdateObjectsByTemplate(ot, paramNamespace, paramValues.Values); err != nil {
 			lu.Error(err, "Failed to update ObjectTemplate")
 			continue
 		}

@@ -124,37 +124,41 @@ spec:
         spec:
           description: ObjectTemplateSpec defines the desired state of ObjectTemplate
           properties:
-            template:
-              description: Template defines template for spec creation
-              properties:
-                apiVersion:
-                  type: string
-                kind:
-                  type: string
-                metadata:
-                  description: Metadata metadata for object
-                  properties:
-                    annotations:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    labels:
-                      additionalProperties:
-                        type: string
-                      type: object
-                  type: object
-                name:
-                  type: string
-                spec:
-                  type: string
-              required:
-              - apiVersion
-              - kind
-              - name
-              - spec
-              type: object
+            description:
+              type: string
+            objects:
+              items:
+                description: Object defines a single object to be created
+                properties:
+                  apiVersion:
+                    type: string
+                  kind:
+                    type: string
+                  metadata:
+                    description: Metadata metadata for object
+                    properties:
+                      annotations:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      labels:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    type: object
+                  name:
+                    type: string
+                  spec:
+                    type: string
+                required:
+                - apiVersion
+                - kind
+                - name
+                - spec
+                type: object
+              type: array
           required:
-          - template
+          - objects
           type: object
         status:
           description: ObjectTemplateStatus defines the observed state of ObjectTemplate

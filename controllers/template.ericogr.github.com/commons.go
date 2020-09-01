@@ -26,14 +26,27 @@ type Common struct {
 	Log logr.Logger
 }
 
-// UpdateObjectByTemplate update namespace
-func (c *Common) UpdateObjectByTemplate(ot otv1.ObjectTemplate, namespaceName string, values map[string]string) error {
+// UpdateObjectsByTemplate update object
+func (c *Common) UpdateObjectsByTemplate(ot otv1.ObjectTemplate, namespaceName string, values map[string]string) error {
+	for _, obj := range ot.Spec.Objects {
+		err := c.UpdateSingleObjectByTemplate(obj, namespaceName, values)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// UpdateSingleObjectByTemplate update object
+func (c *Common) UpdateSingleObjectByTemplate(obj otv1.Object, namespaceName string, values map[string]string) error {
 	ctx := context.Background()
 	log := c.Log.WithValues("objecttemplate", otGV)
-	reference := fmt.Sprintf("[%v(%v)] at %v namespace", ot.Spec.Template.Kind, ot.Spec.Template.Name, namespaceName)
+	reference := fmt.Sprintf("[%v(%v)] at %v namespace", obj.Kind, obj.Name, namespaceName)
 	log.Info(fmt.Sprintf("Ready to process %v", reference))
 
-	newObj, gvk, err := c.ToObject(ot.Spec.Template, values, namespaceName)
+	newObj, gvk, err := c.ToObject(obj, values, namespaceName)
 
 	if err != nil {
 		return fmt.Errorf("Error serializing %v: %v", reference, err.Error())
@@ -44,7 +57,7 @@ func (c *Common) UpdateObjectByTemplate(ot otv1.ObjectTemplate, namespaceName st
 		*gvk,
 		types.NamespacedName{
 			Namespace: namespaceName,
-			Name:      ot.Spec.Template.Name,
+			Name:      obj.Name,
 		},
 	)
 
@@ -129,7 +142,7 @@ func (c *Common) GetObjectTemplateByName(name string) (*otv1.ObjectTemplate, err
 	}
 
 	for _, ot := range ots {
-		if ot.Spec.Template.Name == name {
+		if ot.Name == name {
 			return &ot, nil
 		}
 	}
@@ -165,9 +178,9 @@ func (c *Common) GetObjectSimplified(groupversion string, kind string, namespace
 }
 
 // ToObject process object from template
-func (c *Common) ToObject(template otv1.Template, values map[string]string, namespaceName string) (unstructured.Unstructured, *schema.GroupVersionKind, error) {
-	templateValues := c.addEnvironmentVariablesToMap(values, template, namespaceName)
-	templateYAML := getStringObject(template.APIVersion, template.Kind, template.Spec)
+func (c *Common) ToObject(obj otv1.Object, values map[string]string, namespaceName string) (unstructured.Unstructured, *schema.GroupVersionKind, error) {
+	templateValues := c.addRuntimeVariablesToMap(values, obj, namespaceName)
+	templateYAML := getStringObject(obj.APIVersion, obj.Kind, obj.Spec)
 	templateYAMLExecuted, err := executeTemplate(templateYAML, templateValues)
 
 	if err != nil {
@@ -182,13 +195,13 @@ func (c *Common) ToObject(template otv1.Template, values map[string]string, name
 		return object, nil, err
 	}
 
-	gvk := schema.FromAPIVersionAndKind(template.APIVersion, template.Kind)
+	gvk := schema.FromAPIVersionAndKind(obj.APIVersion, obj.Kind)
 
 	object.SetNamespace(namespaceName)
 	object.SetGroupVersionKind(gvk)
-	object.SetName(template.Name)
-	object.SetLabels(template.Metadata.Labels)
-	object.SetAnnotations(template.Metadata.Annotations)
+	object.SetName(obj.Name)
+	object.SetLabels(obj.Metadata.Labels)
+	object.SetAnnotations(obj.Metadata.Annotations)
 
 	return object, &gvk, nil
 }
@@ -200,13 +213,13 @@ func (c *Common) UpdateStatus(ctx context.Context, obj runtime.Object) {
 	}
 }
 
-func (c *Common) addEnvironmentVariablesToMap(values map[string]string, template otv1.Template, namespaceName string) map[string]string {
+func (c *Common) addRuntimeVariablesToMap(values map[string]string, obj otv1.Object, namespaceName string) map[string]string {
 	newMap := copyMap(values)
 
 	newMap["__namespace"] = namespaceName
-	newMap["__apiVersion"] = template.APIVersion
-	newMap["__kind"] = template.Kind
-	newMap["__name"] = template.Name
+	newMap["__apiVersion"] = obj.APIVersion
+	newMap["__kind"] = obj.Kind
+	newMap["__name"] = obj.Name
 
 	return newMap
 }

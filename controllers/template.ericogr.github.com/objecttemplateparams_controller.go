@@ -84,7 +84,7 @@ func (r *ObjectTemplateParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Resul
 		}
 
 		if ot != nil {
-			err = common.UpdateObjectByTemplate(*ot, req.NamespacedName.Namespace, parameter.Values)
+			err = common.UpdateObjectsByTemplate(*ot, req.NamespacedName.Namespace, parameter.Values)
 
 			if err != nil {
 				lu.Error(err, "Failed to update object template")
