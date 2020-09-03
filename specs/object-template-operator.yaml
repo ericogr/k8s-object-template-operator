@@ -377,7 +377,7 @@ spec:
         - --enable-leader-election
         command:
         - /manager
-        image: object-template:latest
+        image: ericogr/k8s-object-template-operator:latest
         name: manager
         resources:
           limits:
