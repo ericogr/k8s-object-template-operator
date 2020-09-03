@@ -9,6 +9,10 @@ This operator can create kubernete objects based on templates and simple namespa
 # Installation
 Use the file [config/specs.yaml](specs/object-template-operator.yaml) as base to deploy this operator with all permissions (dev/test mode). See section about roles bellow.
 
+```sh
+kubectl apply -f https://raw.githubusercontent.com/ericogr/k8s-object-template-operator/master/specs/object-template-operator.yaml
+```
+
 ## Additionals Kubernetes Roles
 This operator must be allowed to create kubernetes objects. With default permission, it can create any object, but it can be a security issue. The ClusterRole ```k8s-ot-manager-role``` can be used to set permissions as necessary.
 
