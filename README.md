@@ -2,19 +2,15 @@
 This operator can be used to create any kubernetes object dynamically. Build your templates and set parameters to create new k8s objects.
 
 ## Use case
-Many kubernetes clusters are shared among many applications and teams. Sometimes services are available within the cluster scope and teams can use it to create or configure services using kubernetes spec (such as PrometheusRule, ExternalDNS, etc.). Some of these specs are too complex or contain some configurations that we do not want to expose. You can automatize creation of many objects using one template.
+Many kubernetes clusters are shared among many applications and teams. Sometimes services are available within the cluster scope and teams can use it to create or configure services using kubernetes spec (such as PrometheusRule, ExternalDNS, etc.). Some of these specs are too complex or contains some configurations that we do not want to expose. You can automate it's creation using templates.
 
-Use this operator can create these kubernete objects based on templates and simple namespaced parameters. You can give permissions to user create parameters but hide templates and created objects from developers / users using the Kubernetes RBAC system.
+This operator can create kubernete objects based on templates and simple namespaced parameters. You can give permissions to user create parameters but hide templates and created objects from developers or users using the Kubernetes RBAC system.
 
-## New Custom Resource Definitions (CRD's)
-We have two CRD's: [ObjectTemplate](config/crd/bases/template.ericogr.github.com_objecttemplates.yaml) and [ObjectTemplateParameters](config/crd/bases/template.ericogr.github.com_objecttemplateparams.yaml).
-
-**ObjectTemplate (cluster scope):** used as model to create objects in namespaces (can be used by k8s admins)
-
-**ObjectTemplateParameters (namespaced):** used as model parameters to create objects in their namespace (can be used by k8s users/devs)
+# Installation
+Use the file [config/specs.yaml](specs/object-template-operator.yaml) as base to deploy this operator with all permissions (dev/test mode). See section about roles bellow.
 
 ## Additionals Kubernetes Roles
-This operator must be allowed to create kubernetes objects, it needs more permission than defaults. The ClusterRole ```k8s-ot-manager-role``` can be used to add the new permissions as necessary.
+This operator must be allowed to create kubernetes objects. With default permission, it can create any object, but it can be a security issue. The ClusterRole ```k8s-ot-manager-role``` can be used to set permissions as necessary.
 
 See this example to add PrometheusRules permission to this operator:
 
@@ -77,20 +73,17 @@ rules:
   - patch
   - update
 ```
+# New Custom Resource Definitions (CRD's)
+We have two CRD's: [ObjectTemplate](config/crd/bases/template.ericogr.github.com_objecttemplates.yaml) and [ObjectTemplateParameters](config/crd/bases/template.ericogr.github.com_objecttemplateparams.yaml).
 
-## Basic Template Substitution System
-You can use sintax like ```{{ .variable }}``` to replace parameters. Let's say you create ```app_name: myapp```. You can use ```{{ .app_name }}``` inside spec template to be replaced in runtime by this controller. If you need to scape braces, use ```{{"{{anything}}"}}```
+**ObjectTemplate (cluster scope):** used as model to create objects in namespaces (can be used by k8s admins)
 
-### System Runtime Variables
+**ObjectTemplateParameters (namespaced):** used as model parameters to create objects in their namespace (can be used by k8s users/devs)
 
-|Name         |Description       |
-|-------------|------------------|
-|__namespace  |Current namespace |
-|__apiVersion |API Version       |
-|__kind       |The name of kind  |
-|__name       |Name of object    |
+# Templates (ObjectTemplate)
+Use templates as a base to create kubernetes objects. Users can define your own parameters to create new objects.
 
-**Template example**
+## Template example
 
 ```yaml
 ---
@@ -128,7 +121,22 @@ spec:
             app_slack_channel: '{{ .app_slack_channel }}'
 ```
 
- **Parameters example**
+## Basic Template Substitution System
+You can use sintax like ```{{ .variable }}``` to replace parameters. Let's say you create ```app_name: myapp```. You can use ```{{ .app_name }}``` inside spec template to be replaced in runtime by this controller. If you need to scape braces, use ```{{"{{anything}}"}}```
+
+### System Runtime Variables
+
+|Name         |Description       |
+|-------------|------------------|
+|__namespace  |Current namespace |
+|__apiVersion |API Version       |
+|__kind       |The name of kind  |
+|__name       |Name of object    |
+
+# Parameters (ObjectTemplateParams)
+Users can define your own parameters to create new objects based on templates.
+
+## Parameters example
 
 ```yaml
 ---

@@ -221,6 +221,17 @@ metadata:
   name: k8s-ot-manager-role
 rules:
 - apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - template.ericogr.github.com
   resources:
   - objecttemplateparams
