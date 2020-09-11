@@ -54,7 +54,7 @@ spec:
 
 	Describe("Identation", func() {
 		Context("Text with no identation", func() {
-			It("should be idented", func() {
+			It("Should be idented", func() {
 				Expect(ident).To(Equal(addIdentation(noIdent)))
 			})
 		})
@@ -67,4 +67,5 @@ spec:
 			})
 		})
 	})
+
 })
