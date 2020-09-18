@@ -14,7 +14,7 @@ kubectl apply -f https://raw.githubusercontent.com/ericogr/k8s-object-template-o
 ```
 
 ## Additionals Kubernetes Roles
-This operator must be allowed to create kubernetes objects. With default permission, it can create any object, but it can be a security issue. The ClusterRole ```k8s-ot-manager-role``` can be used to set permissions as necessary.
+This operator should be allowed to create objects defined in templates. With default permission, it can create any object, but it can be a bit tricky. The ClusterRole ```k8s-ot-manager-role``` can be used to set permissions as needed.
 
 See this example to add PrometheusRules permission to this operator:
 
