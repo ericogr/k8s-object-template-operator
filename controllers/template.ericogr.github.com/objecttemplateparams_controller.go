@@ -18,10 +18,12 @@ package controllers
 
 import (
 	"context"
+	"reflect"
 
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -84,7 +86,11 @@ func (r *ObjectTemplateParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Resul
 		}
 
 		if ot != nil {
-			err = common.UpdateObjectsByTemplate(*ot, req.NamespacedName.Namespace, parameter.Values)
+			kind := reflect.TypeOf(otv1.ObjectTemplateParams{}).Name()
+			gvk := otv1.GroupVersion.WithKind(kind)
+			controllerRef := metav1.NewControllerRef(otp.GetObjectMeta(), gvk)
+
+			err = common.UpdateObjectsByTemplate(*ot, []metav1.OwnerReference{*controllerRef}, req.NamespacedName.Namespace, parameter.Values)
 
 			if err != nil {
 				lu.Error(err, "Failed to update object template")
