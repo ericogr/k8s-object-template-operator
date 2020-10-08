@@ -62,19 +62,19 @@ func (r *ObjectTemplateParamsReconciler) Reconcile(req ctrl.Request) (ctrl.Resul
 	err := r.Get(ctx, req.NamespacedName, &otp)
 	common := Common{r.Client, r.Log}
 
-	defer common.UpdateStatus(ctx, &otp)
-
 	if err != nil {
 		otp.Status.Status = err.Error()
 
 		if k8sErrors.IsNotFound(err) {
 			// Object not found, return. Created objects are automatically garbage collected
-			return ctrl.Result{}, nil
+			return ctrl.Result{}, client.IgnoreNotFound(err)
 		}
 
 		// Error reading the object - requeue the request.
 		return ctrl.Result{}, err
 	}
+
+	defer common.UpdateStatus(ctx, &otp)
 
 	lu := LogUtil{Log: log}
 	for _, parameter := range otp.Spec.Templates {
