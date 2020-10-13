@@ -2,7 +2,7 @@
 This operator can be used to create any kubernetes object dynamically. Build your templates and set parameters to create new k8s objects.
 
 ## Use case
-Many kubernetes clusters are shared among many applications and teams. Sometimes services are available within the cluster scope and teams can use it to create or configure services using kubernetes spec (such as PrometheusRule, ExternalDNS, etc.). Some of these specs are too complex or contains some configurations that we do not want to expose. You can automate it's creation using templates.
+Many kubernetes clusters are shared among many applications and teams. Sometimes services are available within the cluster scope and teams can use it to create or configure services using kubernetes spec (such as ConfigMap, Secret, PrometheusRule, ExternalDNS, etc.). Some of these specs are too complex or contains some configurations that we do not want to expose. You can automate it's creation using templates.
 
 This operator can create kubernete objects based on templates and simple namespaced parameters. You can give permissions to user create parameters but hide templates and created objects from developers or users using the Kubernetes RBAC system.
 
@@ -16,7 +16,7 @@ kubectl apply -f https://raw.githubusercontent.com/ericogr/k8s-object-template-o
 ## Additionals Kubernetes Roles
 This operator should be allowed to create objects defined in templates. With default permission, it can create any object, but it can be a bit tricky. The ClusterRole ```k8s-ot-manager-role``` can be used to set permissions as needed.
 
-See this example to add PrometheusRules permission to this operator:
+See this example to add ConfigMap permission to this operator:
 
 ```yaml
 ---
@@ -27,9 +27,9 @@ metadata:
   name: k8s-ot-manager-role
 rules:
 - apiGroups:
-  - monitoring.coreos.com
+  - ""
   resources:
-  - prometheusrules
+  - configmaps
   verbs:
   - create
   - get
@@ -94,12 +94,12 @@ Use templates as a base to create kubernetes objects. Users can define your own 
 apiVersion: template.ericogr.github.com/v1
 kind: ObjectTemplate
 metadata:
-  name: objecttemplate-prometheus-rules-default
+  name: objecttemplate-configmap-test
 spec:
-  description: Default prometheus rule
+  description: ConfigMap test
   objects:
-  - kind: PrometheusRule
-    apiVersion: monitoring.coreos.com/v1
+  - kind: ConfigMap
+    apiVersion: v1
     metadata:
       labels:
         chave1: valor1
@@ -107,26 +107,15 @@ spec:
       annotations:
         chave1a: valor1a
         chave2a: valor2a
-    name: prometheus-rule-default
-    spec: |-
-      groups:
-      - name: pods
-        rules:
-        - alert: pod_not_ready
-          annotations:
-            description: 'Pod not ready : {{"{{ $labels.pod }}"}}'
-            summary: 'Pod not ready: {{"{{ $labels.pod }}"}}'
-          expr: sum by(pod) (kube_pod_status_ready{namespace="{{ .__namespace }}"} == 0) != 0
-          for: 10m
-          labels:
-            app_name: {{ .app_name }}
-            app_route: slack
-            app_severity: critical
-            app_slack_channel: '{{ .app_slack_channel }}'
+    name: configmap-test
+    templateBody: |-
+      data:
+        name: '{{ .name }}'
+        age: '{{ .age }}'
 ```
 
 ## Basic Template Substitution System
-You can use sintax like ```{{ .variable }}``` to replace parameters. Let's say you create ```app_name: myapp```. You can use ```{{ .app_name }}``` inside spec template to be replaced in runtime by this controller. If you need to scape braces, use ```{{"{{anything}}"}}```
+You can use sintax like ```{{ .variable }}``` to replace parameters. Let's say you create ```name: foo```. You can use ```{{ .name }}``` inside spec template to be replaced in runtime by this controller. If you need to scape braces, use ```{{"{{anything}}"}}```
 
 ### System Runtime Variables
 
@@ -151,8 +140,8 @@ metadata:
   namespace: default
 spec:
   templates:
-  - name: objecttemplate-prometheus-rules-default
+  - name: objecttemplate-configmap-test
     values:
-      app_name: myapp
-      app_slack_channel: '#slack-channel'
+      name: foo
+      age: '64'
  ```

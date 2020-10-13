@@ -28,11 +28,11 @@ type Metadata struct {
 
 // Object defines a single object to be created
 type Object struct {
-	Kind       string   `json:"kind"`
-	APIVersion string   `json:"apiVersion"`
-	Metadata   Metadata `json:"metadata,omitempty"`
-	Name       string   `json:"name"`
-	Spec       string   `json:"spec"`
+	Kind         string   `json:"kind"`
+	APIVersion   string   `json:"apiVersion"`
+	Metadata     Metadata `json:"metadata,omitempty"`
+	Name         string   `json:"name"`
+	TemplateBody string   `json:"templateBody"`
 }
 
 // ObjectTemplateSpec defines the desired state of ObjectTemplate

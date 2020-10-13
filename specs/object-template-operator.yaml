@@ -148,13 +148,13 @@ spec:
                     type: object
                   name:
                     type: string
-                  spec:
+                  templateBody:
                     type: string
                 required:
                 - apiVersion
                 - kind
                 - name
-                - spec
+                - templateBody
                 type: object
               type: array
           required:

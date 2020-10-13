@@ -181,7 +181,7 @@ func (c *Common) GetObjectSimplified(groupversion string, kind string, namespace
 // ToObject process object from template
 func (c *Common) ToObject(obj otv1.Object, owners []metav1.OwnerReference, values map[string]string, namespaceName string) (unstructured.Unstructured, *schema.GroupVersionKind, error) {
 	templateValues := c.addRuntimeVariablesToMap(values, obj, namespaceName)
-	templateYAML := getStringObject(obj.APIVersion, obj.Kind, obj.Spec)
+	templateYAML := getStringObject(obj.APIVersion, obj.Kind, obj.TemplateBody)
 	templateYAMLExecuted, err := executeTemplate(templateYAML, templateValues)
 
 	if err != nil {

@@ -21,7 +21,7 @@ import (
 	"text/template"
 )
 
-func getStringObject(apiVersion string, kind string, spec string) string {
+func getStringObject(apiVersion string, kind string, templateBody string) string {
 	sb := strings.Builder{}
 
 	sb.WriteString("---\n")
@@ -31,15 +31,9 @@ func getStringObject(apiVersion string, kind string, spec string) string {
 	sb.WriteString("kind: ")
 	sb.WriteString(kind)
 	sb.WriteRune('\n')
-	sb.WriteString("spec:\n")
-	sb.WriteString(addIdentation(spec))
+	sb.WriteString(templateBody)
 
 	return sb.String()
-}
-
-func addIdentation(str string) string {
-	str = "  " + str
-	return strings.ReplaceAll(str, "\n", "\n  ")
 }
 
 func executeTemplate(templateYAML string, values map[string]string) (string, error) {

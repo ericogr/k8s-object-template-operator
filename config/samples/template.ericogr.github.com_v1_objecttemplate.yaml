@@ -2,12 +2,12 @@
 apiVersion: template.ericogr.github.com/v1
 kind: ObjectTemplate
 metadata:
-  name: objecttemplate-prometheus-rules-default
+  name: objecttemplate-configmap-test
 spec:
-  description: Default prometheus rule
+  description: ConfigMap test
   objects:
-  - kind: PrometheusRule
-    apiVersion: monitoring.coreos.com/v1
+  - kind: ConfigMap
+    apiVersion: v1
     metadata:
       labels:
         chave1: valor1
@@ -15,19 +15,8 @@ spec:
       annotations:
         chave1a: valor1a
         chave2a: valor2a
-    name: prometheus-rule-default
-    spec: |-
-      groups:
-      - name: pods
-        rules:
-        - alert: pod_not_ready
-          annotations:
-            description: 'Pod not ready : {{"{{ $labels.pod }}"}}'
-            summary: 'Pod not ready: {{"{{ $labels.pod }}"}}'
-          expr: sum by(pod) (kube_pod_status_ready{namespace="{{ .__namespace }}"} == 0) != 0
-          for: 10m
-          labels:
-            app_name: {{ .app_name }}
-            app_route: slack
-            app_severity: critical
-            app_slack_channel: '{{ .app_slack_channel }}'
+    name: configmap-test
+    templateBody: |-
+      data:
+        name: '{{ .name }}'
+        age: '{{ .age }}'
