@@ -77,7 +77,7 @@ func (c *Common) UpdateSingleObjectByTemplate(obj otv1.Object, owners []metav1.O
 		}
 	} else {
 		if err == nil {
-			findObj.Object["spec"] = newObj.Object["spec"]
+			findObj.Object = newObj.Object
 			findObj.SetLabels(newObj.GetLabels())
 			findObj.SetAnnotations(newObj.GetAnnotations())
 			err := c.Client.Update(ctx, &findObj)
