@@ -26,6 +26,7 @@ metadata:
   creationTimestamp: null
   name: k8s-ot-manager-role
 rules:
+# >> HERE, ADDED CONFIGMAP PERMISSIONS
 - apiGroups:
   - ""
   resources:
@@ -36,6 +37,7 @@ rules:
   - list
   - patch
   - update
+# <<
 - apiGroups:
   - template.ericogr.github.com
   resources:
@@ -78,11 +80,11 @@ rules:
   - update
 ```
 # New Custom Resource Definitions (CRD's)
-We have two CRD's: [ObjectTemplate](config/crd/bases/template.ericogr.github.com_objecttemplates.yaml) and [ObjectTemplateParameters](config/crd/bases/template.ericogr.github.com_objecttemplateparams.yaml).
+You have two new CRD's: [ObjectTemplate](config/crd/bases/template.ericogr.github.com_objecttemplates.yaml) and [ObjectTemplateParameters](config/crd/bases/template.ericogr.github.com_objecttemplateparams.yaml).
 
-**ObjectTemplate (cluster scope):** used as model to create objects in namespaces (can be used by k8s admins)
+**ObjectTemplate (cluster scope):** template used to create kubernetes objects at users namespaces (can be used by k8s admins)
 
-**ObjectTemplateParameters (namespaced):** used as model parameters to create objects in their namespace (can be used by k8s users/devs)
+**ObjectTemplateParameters (namespaced):** parameters used to create objects in their namespace (can be used by k8s users/devs)
 
 # Templates (ObjectTemplate)
 Use templates as a base to create kubernetes objects. Users can define your own parameters to create new objects.
@@ -102,11 +104,11 @@ spec:
     apiVersion: v1
     metadata:
       labels:
-        chave1: valor1
-        chave2: valor2
+        label1: labelvalue1
+        label2: labelvalue2
       annotations:
-        chave1a: valor1a
-        chave2a: valor2a
+        annotation1: annotationvalue1
+        annotation2: annotationvalue2
     name: configmap-test
     templateBody: |-
       data:
@@ -115,7 +117,7 @@ spec:
 ```
 
 ## Basic Template Substitution System
-You can use sintax like ```{{ .variable }}``` to replace parameters. Let's say you create ```name: foo```. You can use ```{{ .name }}``` inside spec template to be replaced in runtime by this controller. If you need to scape braces, use ```{{"{{anything}}"}}```
+You can use sintax like ```{{ .variable }}``` to replace parameters. Let's say you create ```name: foo```. You can use ```{{ .name }}``` inside ```templateBody``` template to be replaced in runtime by this controller. If you need to scape braces, use ```{{"{{anything}}"}}```.
 
 ### System Runtime Variables
 
@@ -127,7 +129,7 @@ You can use sintax like ```{{ .variable }}``` to replace parameters. Let's say y
 |__name       |Name of object    |
 
 # Parameters (ObjectTemplateParams)
-Users can define your own parameters to create new objects based on templates.
+Users can define your own parameters to create new objects based on templates in their namespace.
 
 ## Parameters example
 
