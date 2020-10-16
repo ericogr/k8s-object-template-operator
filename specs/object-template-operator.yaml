@@ -17,6 +17,9 @@ spec:
   - JSONPath: .status.status
     name: status
     type: string
+  - JSONPath: .metadata.creationTimestamp
+    name: age
+    type: date
   group: template.ericogr.github.com
   names:
     kind: ObjectTemplateParams
@@ -96,6 +99,9 @@ spec:
   - JSONPath: .status.status
     name: status
     type: string
+  - JSONPath: .metadata.creationTimestamp
+    name: age
+    type: date
   group: template.ericogr.github.com
   names:
     kind: ObjectTemplate
