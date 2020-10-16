@@ -38,6 +38,7 @@ type ObjectTemplateParamsStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:printcolumn:name="status",type=string,JSONPath=`.status.status`
+// +kubebuilder:printcolumn:name="age",type=date,JSONPath=`.metadata.creationTimestamp`
 // +kubebuilder:subresource:status
 
 // ObjectTemplateParams is the Schema for the objecttemplateparams API

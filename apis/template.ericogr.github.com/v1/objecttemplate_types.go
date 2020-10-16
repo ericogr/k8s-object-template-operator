@@ -49,6 +49,7 @@ type ObjectTemplateStatus struct {
 // +kubebuilder:object:root=true
 // +kubebuilder:resource:path=objecttemplates,scope=Cluster
 // +kubebuilder:printcolumn:name="status",type=string,JSONPath=`.status.status`
+// +kubebuilder:printcolumn:name="age",type=date,JSONPath=`.metadata.creationTimestamp`
 // +kubebuilder:subresource:status
 
 // ObjectTemplate is the Schema for the objecttemplates API

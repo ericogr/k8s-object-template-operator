@@ -7,7 +7,7 @@ Many kubernetes clusters are shared among many applications and teams. Sometimes
 This operator can create kubernete objects based on templates and simple namespaced parameters. You can give permissions to user create parameters but hide templates and created objects from developers or users using the Kubernetes RBAC system.
 
 # Installation
-Use the file [config/specs.yaml](specs/object-template-operator.yaml) as base to deploy this operator with all permissions (dev/test mode). See section about roles bellow.
+Use the file [specs/object-template-operator.yaml](specs/object-template-operator.yaml) to start deploy this operator with all permissions (dev/test mode). For production, see section about roles bellow.
 
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/ericogr/k8s-object-template-operator/master/specs/object-template-operator.yaml
