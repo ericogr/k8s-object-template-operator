@@ -54,7 +54,17 @@ var _ = Describe("ObjectTemplateParams controller", func() {
 					Description: "namespace-template",
 					Objects: []otv1.Object{
 						{
-							Kind:       "ConfigMap",
+							Kind: "ConfigMap",
+							Metadata: otv1.Metadata{
+								Annotations: map[string]string{
+									"annotation1": "value_annotation1",
+									"annotation2": "value_annotation2",
+								},
+								Labels: map[string]string{
+									"label1": "value_label1",
+									"label2": "value_label2",
+								},
+							},
 							APIVersion: "v1",
 							Name:       NewObjectName,
 							TemplateBody: `data:
@@ -116,9 +126,18 @@ var _ = Describe("ObjectTemplateParams controller", func() {
 			}, timeout, interval).Should(BeTrue())
 			Expect(configmap.Data["player_initial_lives"]).Should(BeIdenticalTo("3"))
 			Expect(configmap.Data["ui_properties_file_name"]).Should(BeIdenticalTo("user-interface.properties"))
+			Expect(configmap.ObjectMeta.Annotations["annotation1"]).Should(BeIdenticalTo("value_annotation1"))
+			Expect(configmap.ObjectMeta.Annotations["annotation2"]).Should(BeIdenticalTo("value_annotation2"))
+			Expect(configmap.ObjectMeta.Labels["label1"]).Should(BeIdenticalTo("value_label1"))
+			Expect(configmap.ObjectMeta.Labels["label2"]).Should(BeIdenticalTo("value_label2"))
 
 			By("By updating object template")
 			Expect(k8sClient.Get(ctx, types.NamespacedName{Name: ObjectTemplateName}, createdObjectTemplate)).Should(Succeed())
+
+			createdObjectTemplate.Spec.Objects[0].Metadata.Annotations["annotation2"] = "value_annotation2_new"
+			createdObjectTemplate.Spec.Objects[0].Metadata.Annotations["annotation3"] = "value_annotation3"
+			createdObjectTemplate.Spec.Objects[0].Metadata.Labels["label1"] = "value_label1_new"
+			createdObjectTemplate.Spec.Objects[0].Metadata.Labels["label3"] = "value_label3"
 			createdObjectTemplate.Spec.Objects[0].TemplateBody = `data:
   new_player_initial_lives: "{{ .lives }}"
   new_ui_properties_file_name: "{{ .properties_file }}"`
@@ -131,7 +150,14 @@ var _ = Describe("ObjectTemplateParams controller", func() {
 					return false
 				}
 
-				return configmap.Data["new_player_initial_lives"] == "3" && configmap.Data["new_ui_properties_file_name"] == "user-interface.properties"
+				return configmap.Data["new_player_initial_lives"] == "3" &&
+					configmap.Data["new_ui_properties_file_name"] == "user-interface.properties" &&
+					configmap.Annotations["annotation1"] == "value_annotation1" &&
+					configmap.Annotations["annotation2"] == "value_annotation2_new" &&
+					configmap.Annotations["annotation3"] == "value_annotation3" &&
+					configmap.Labels["label1"] == "value_label1_new" &&
+					configmap.Labels["label2"] == "value_label2" &&
+					configmap.Labels["label3"] == "value_label3"
 			}, timeout, interval).Should(BeTrue())
 		})
 	})
