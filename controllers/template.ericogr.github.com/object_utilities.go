@@ -19,6 +19,8 @@ package controllers
 import (
 	"strings"
 	"text/template"
+
+	"github.com/Masterminds/sprig"
 )
 
 func getStringObject(apiVersion string, kind string, templateBody string) string {
@@ -37,14 +39,11 @@ func getStringObject(apiVersion string, kind string, templateBody string) string
 }
 
 func executeTemplate(templateYAML string, values map[string]string) (string, error) {
-	template, err := template.New("template").Parse(templateYAML)
-
-	if err != nil {
-		return "", err
-	}
+	fmap := sprig.TxtFuncMap()
+	t := template.Must(template.New("template").Funcs(fmap).Parse(templateYAML))
 
 	sb := strings.Builder{}
-	err = template.Execute(&sb, values)
+	err := t.Execute(&sb, values)
 
 	if err != nil {
 		return "", err

@@ -117,7 +117,29 @@ spec:
 ```
 
 ## Basic Template Substitution System
-You can use sintax like ```{{ .variable }}``` to replace parameters. Let's say you create ```name: foo```. You can use ```{{ .name }}``` inside ```templateBody``` template to be replaced in runtime by this controller. If you need to scape braces, use ```{{"{{anything}}"}}```.
+You can use sintax like ```{{ .variable }}``` to replace parameters. Let's say you created a template parameter with name/value ```name: foo```. You can use ```{{ .name }}``` inside ```templateBody``` template to be replaced in runtime. If you need to scape braces, use ```{{"{{anything}}"}}```.
+
+### Library template functions (by Sprig)
+There are many template functions library available to use. See some examples:
+
+Remove spaces, convert to lowercase and truncate to 5 chars:
+
+```template
+{{ .username | trim | lower | trunc 5 }}
+```
+Convert text to base64:
+
+```template
+{{ .password | b64enc }}
+```
+
+Add 10 to age:
+
+```template
+{{ .age | add 10 }}
+```
+
+> More information: http://masterminds.github.io/sprig/
 
 ### System Runtime Variables
 
