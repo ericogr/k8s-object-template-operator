@@ -1,5 +1,5 @@
 ---
-apiVersion: template.ericogr.github.com/v1
+apiVersion: template.k8s.ericogr.com.br/v1
 kind: ObjectTemplate
 metadata:
   name: objecttemplate-configmap-test

@@ -6,7 +6,7 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.2.5
   creationTimestamp: null
-  name: objecttemplateparams.template.ericogr.github.com
+  name: objecttemplateparams.template.k8s.ericogr.com.br
 spec:
   additionalPrinterColumns:
   - JSONPath: .status.status
@@ -15,7 +15,7 @@ spec:
   - JSONPath: .metadata.creationTimestamp
     name: age
     type: date
-  group: template.ericogr.github.com
+  group: template.k8s.ericogr.com.br
   names:
     kind: ObjectTemplateParams
     listKind: ObjectTemplateParamsList

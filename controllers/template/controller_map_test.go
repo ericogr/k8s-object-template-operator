@@ -26,10 +26,10 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
-	otv1 "github.com/ericogr/k8s-object-template/apis/template.ericogr.github.com/v1"
+	otv1 "github.com/ericogr/k8s-object-template/apis/v1"
 )
 
-var _ = Describe("ObjectTemplateParams controller", func() {
+var _ = Describe("ObjectTemplateParams controller (ConfigMap)", func() {
 	const (
 		ObjectTemplateParamsNamespace = "default"
 		ObjectTemplateParamsName      = "otp-name"
@@ -40,11 +40,11 @@ var _ = Describe("ObjectTemplateParams controller", func() {
 	)
 	Context("When updating parameters from ObjectTemplateParams", func() {
 		It("Should update templated object.", func() {
-			By("By creating a new ObjectTemplate")
+			By("By creating a new ObjectTemplate as a kubernetes map")
 			ctx := context.Background()
 			objectTemplate := &otv1.ObjectTemplate{
 				TypeMeta: metav1.TypeMeta{
-					APIVersion: "template.ericogr.github.com/v1",
+					APIVersion: "template.k8s.ericogr.com.br/v1",
 					Kind:       "ObjectTemplate",
 				},
 				ObjectMeta: metav1.ObjectMeta{
@@ -79,18 +79,14 @@ var _ = Describe("ObjectTemplateParams controller", func() {
 			createdObjectTemplate := &otv1.ObjectTemplate{}
 			Eventually(func() bool {
 				err := k8sClient.Get(ctx, types.NamespacedName{Name: ObjectTemplateName}, createdObjectTemplate)
-
-				if err != nil {
-					return false
-				}
-				return true
+				return err == nil
 			}, timeout, interval).Should(BeTrue())
 			Expect(createdObjectTemplate.Spec.Objects).Should(HaveLen(1))
 
 			By("Creating a new ObjectTemplateParam")
 			objectTemplateParams := &otv1.ObjectTemplateParams{
 				TypeMeta: metav1.TypeMeta{
-					APIVersion: "template.ericogr.github.com/v1",
+					APIVersion: "template.k8s.ericogr.com.br/v1",
 					Kind:       "ObjectTemplateParam",
 				},
 				ObjectMeta: metav1.ObjectMeta{
@@ -118,11 +114,7 @@ var _ = Describe("ObjectTemplateParams controller", func() {
 					ctx,
 					types.NamespacedName{Name: NewObjectName, Namespace: ObjectTemplateParamsNamespace},
 					&configmap)
-
-				if err != nil {
-					return false
-				}
-				return true
+				return err == nil
 			}, timeout, interval).Should(BeTrue())
 			Expect(configmap.Data["player_initial_lives"]).Should(BeIdenticalTo("3"))
 			Expect(configmap.Data["ui_properties_file_name"]).Should(BeIdenticalTo("user-interface.properties"))
@@ -142,7 +134,6 @@ var _ = Describe("ObjectTemplateParams controller", func() {
   new_player_initial_lives: "{{ .lives }}"
   new_ui_properties_file_name: "{{ .properties_file }}"`
 			Expect(k8sClient.Update(ctx, createdObjectTemplate)).Should(Succeed())
-
 			Eventually(func() bool {
 				err := k8sClient.Get(ctx, types.NamespacedName{Name: NewObjectName, Namespace: ObjectTemplateParamsNamespace}, &configmap)
 

@@ -15,7 +15,7 @@ all: manager
 
 # Run tests
 test: generate fmt vet manifests
-	go test ./... -coverprofile cover.out
+	go test -v ./... -coverprofile cover.out
 
 # Build manager binary
 manager: generate fmt vet
@@ -68,7 +68,7 @@ docker-push:
 	docker push ${IMG}
 
 security: gosec
-	gosec . controllers/template.ericogr.github.com apis/template.ericogr.github.com/v1/
+	gosec . controllers/template.k8s.ericogr.com.br apis/template.k8s.ericogr.com.br/v1/
 
 # find or download controller-gen
 # download controller-gen if necessary

@@ -1,11 +1,10 @@
-domain: github.com
-multigroup: true
+domain: k8s.ericogr.com.br
 repo: github.com/ericogr/k8s-object-template
 resources:
-- group: template.ericogr.github.com
+- group: template
   kind: ObjectTemplate
   version: v1
-- group: template.ericogr.github.com
+- group: template
   kind: ObjectTemplateParams
   version: v1
 version: "2"

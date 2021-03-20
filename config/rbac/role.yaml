@@ -18,7 +18,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - template.ericogr.github.com
+  - template.k8s.ericogr.com.br
   resources:
   - objecttemplateparams
   verbs:
@@ -30,7 +30,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - template.ericogr.github.com
+  - template.k8s.ericogr.com.br
   resources:
   - objecttemplateparams/status
   verbs:
@@ -38,7 +38,7 @@ rules:
   - patch
   - update
 - apiGroups:
-  - template.ericogr.github.com
+  - template.k8s.ericogr.com.br
   resources:
   - objecttemplates
   verbs:
@@ -50,7 +50,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - template.ericogr.github.com
+  - template.k8s.ericogr.com.br
   resources:
   - objecttemplates/status
   verbs:

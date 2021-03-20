@@ -26,9 +26,8 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	otv1 "github.com/ericogr/k8s-object-template/apis/template.ericogr.github.com/v1"
-	controllers "github.com/ericogr/k8s-object-template/controllers/template.ericogr.github.com"
-	otc "github.com/ericogr/k8s-object-template/controllers/template.ericogr.github.com"
+	otv1 "github.com/ericogr/k8s-object-template/apis/v1"
+	controllers "github.com/ericogr/k8s-object-template/controllers/template"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -59,7 +58,7 @@ func main() {
 		MetricsBindAddress: metricsAddr,
 		Port:               9443,
 		LeaderElection:     enableLeaderElection,
-		LeaderElectionID:   "6c0a8208.github.com",
+		LeaderElectionID:   "object-template-leader.github.com",
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
@@ -75,7 +74,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&otc.ObjectTemplateParamsReconciler{
+	if err = (&controllers.ObjectTemplateParamsReconciler{
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("ObjectTemplateParams"),
 		Scheme: mgr.GetScheme(),

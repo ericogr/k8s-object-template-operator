@@ -39,7 +39,7 @@ rules:
   - update
 # <<
 - apiGroups:
-  - template.ericogr.github.com
+  - template.k8s.ericogr.com.br
   resources:
   - objecttemplateparams
   verbs:
@@ -51,7 +51,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - template.ericogr.github.com
+  - template.k8s.ericogr.com.br
   resources:
   - objecttemplateparams/status
   verbs:
@@ -59,7 +59,7 @@ rules:
   - patch
   - update
 - apiGroups:
-  - template.ericogr.github.com
+  - template.k8s.ericogr.com.br
   resources:
   - objecttemplates
   verbs:
@@ -71,7 +71,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - template.ericogr.github.com
+  - template.k8s.ericogr.com.br
   resources:
   - objecttemplates/status
   verbs:
@@ -80,7 +80,7 @@ rules:
   - update
 ```
 # New Custom Resource Definitions (CRD's)
-You have two new CRD's: [ObjectTemplate](config/crd/bases/template.ericogr.github.com_objecttemplates.yaml) and [ObjectTemplateParameters](config/crd/bases/template.ericogr.github.com_objecttemplateparams.yaml).
+You have two new CRD's: [ObjectTemplate](config/crd/bases/template.k8s.ericogr.com.br_objecttemplates.yaml) and [ObjectTemplateParameters](config/crd/bases/template.k8s.ericogr.com.br_objecttemplateparams.yaml).
 
 **ObjectTemplate (cluster scope):** template used to create kubernetes objects at users namespaces (can be used by k8s admins)
 
@@ -93,7 +93,7 @@ Use templates as a base to create kubernetes objects. Users can define your own 
 
 ```yaml
 ---
-apiVersion: template.ericogr.github.com/v1
+apiVersion: template.k8s.ericogr.com.br/v1
 kind: ObjectTemplate
 metadata:
   name: objecttemplate-configmap-test
@@ -157,7 +157,7 @@ Users can define your own parameters to create new objects based on templates in
 
 ```yaml
 ---
-apiVersion: template.ericogr.github.com/v1
+apiVersion: template.k8s.ericogr.com.br/v1
 kind: ObjectTemplateParams
 metadata:
   name: objecttemplateparams-sample

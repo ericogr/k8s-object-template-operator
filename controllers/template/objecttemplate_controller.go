@@ -28,7 +28,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
-	otv1 "github.com/ericogr/k8s-object-template/apis/template.ericogr.github.com/v1"
+	otv1 "github.com/ericogr/k8s-object-template/apis/v1"
 )
 
 // ObjectTemplateReconciler ot reconciler
@@ -46,8 +46,8 @@ func (r *ObjectTemplateReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Complete(r)
 }
 
-// +kubebuilder:rbac:groups=template.ericogr.github.com,resources=objecttemplates,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=template.ericogr.github.com,resources=objecttemplates/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=template.k8s.ericogr.com.br,resources=objecttemplates,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=template.k8s.ericogr.com.br,resources=objecttemplates/status,verbs=get;update;patch
 
 // Reconcile k8s reconcile
 func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {

@@ -5,7 +5,7 @@ metadata:
   name: objecttemplate-editor-role
 rules:
 - apiGroups:
-  - template.ericogr.github.com
+  - template.k8s.ericogr.com.br
   resources:
   - objecttemplates
   verbs:
@@ -17,7 +17,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - template.ericogr.github.com
+  - template.k8s.ericogr.com.br
   resources:
   - objecttemplates/status
   verbs:

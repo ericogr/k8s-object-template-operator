@@ -1,9 +1,8 @@
 ---
-apiVersion: template.ericogr.github.com/v1
+apiVersion: template.k8s.ericogr.com.br/v1
 kind: ObjectTemplateParams
 metadata:
   name: objecttemplateparams-sample
-  namespace: default
 spec:
   templates:
   - name: objecttemplate-configmap-test

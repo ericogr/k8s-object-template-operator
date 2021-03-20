@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	otv1 "github.com/ericogr/k8s-object-template/apis/template.ericogr.github.com/v1"
+	otv1 "github.com/ericogr/k8s-object-template/apis/v1"
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
-	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -15,6 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 var (
@@ -54,44 +54,31 @@ func (c *Common) UpdateSingleObjectByTemplate(obj otv1.Object, owners []metav1.O
 	}
 	log.Info(fmt.Sprintf("Object encoded succefully %v", reference))
 
-	findObj, err := c.GetObject(
-		*gvk,
-		types.NamespacedName{
-			Namespace: namespaceName,
-			Name:      obj.Name,
-		},
-	)
+	findObj := unstructured.Unstructured{}
+	findObj.SetName(obj.Name)
+	findObj.SetNamespace(namespaceName)
+	findObj.SetGroupVersionKind(*gvk)
 
-	// controllerutil.CreateOrUpdate(ctx, c.Client, &newObj, func() error {
-	// 	return nil
-	// })
+	res, err := controllerutil.CreateOrUpdate(ctx, c.Client, &findObj, func() error {
+		findObj.Object["data"] = newObj.Object["data"]
+		findObj.Object["spec"] = newObj.Object["spec"]
+		findObj.SetLabels(newObj.GetLabels())
+		findObj.SetAnnotations(newObj.GetAnnotations())
+		return nil
+	})
 
-	if err != nil && k8sErrors.IsNotFound(err) {
-		log.Info(fmt.Sprintf("Creating new object %v", reference))
-		err := c.Client.Create(ctx, &newObj)
-
-		if err == nil {
-			log.Info(fmt.Sprintf("Create succefully %v", reference))
+	if err == nil {
+		if res == controllerutil.OperationResultCreated {
+			log.Info(fmt.Sprintf("Created succefully %v", reference))
+		} else if res == controllerutil.OperationResultUpdated {
+			log.Info(fmt.Sprintf("Update succefully %v", reference))
+		} else if res == controllerutil.OperationResultNone {
+			log.Info(fmt.Sprintf("Not updated nor created %v", reference))
 		} else {
-			return fmt.Errorf("Error creating object %v: %v", reference, err.Error())
+			log.Info(fmt.Sprintf("Unknown status %v for %v", res, reference))
 		}
 	} else {
-		if err == nil {
-			originalResourceVersion := findObj.GetResourceVersion()
-			findObj.Object = newObj.Object
-			findObj.SetResourceVersion(originalResourceVersion)
-			findObj.SetLabels(newObj.GetLabels())
-			findObj.SetAnnotations(newObj.GetAnnotations())
-			err := c.Client.Update(ctx, &findObj)
-
-			if err == nil {
-				log.Info(fmt.Sprintf("Update succefully %v", reference))
-			} else {
-				return fmt.Errorf("Error updating object %v: %v", reference, err.Error())
-			}
-		} else {
-			return fmt.Errorf("Error getting object %v: %v", reference, err.Error())
-		}
+		return fmt.Errorf("Error updating object %v: %v", reference, err.Error())
 	}
 
 	return nil

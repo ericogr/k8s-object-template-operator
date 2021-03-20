@@ -17,7 +17,7 @@ limitations under the License.
 package controllers
 
 import (
-	otv1 "github.com/ericogr/k8s-object-template/apis/template.ericogr.github.com/v1"
+	otv1 "github.com/ericogr/k8s-object-template/apis/v1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
