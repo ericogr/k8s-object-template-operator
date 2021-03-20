@@ -77,7 +77,9 @@ func (c *Common) UpdateSingleObjectByTemplate(obj otv1.Object, owners []metav1.O
 		}
 	} else {
 		if err == nil {
+			originalResourceVersion := findObj.GetResourceVersion()
 			findObj.Object = newObj.Object
+			findObj.SetResourceVersion(originalResourceVersion)
 			findObj.SetLabels(newObj.GetLabels())
 			findObj.SetAnnotations(newObj.GetAnnotations())
 			err := c.Client.Update(ctx, &findObj)
