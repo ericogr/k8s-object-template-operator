@@ -61,9 +61,13 @@ func (lu *LogUtil) AllErrors() error {
 // AllErrorsMessages all logs message to string
 func (lu *LogUtil) AllErrorsMessages() string {
 	sb := strings.Builder{}
-	for _, sl := range lu.singleLogs {
+	for i, sl := range lu.singleLogs {
 		sb.WriteString(sl.message)
-		sb.WriteString(", ")
+		sb.WriteString(": ")
+		sb.WriteString(sl.error.Error())
+		if len(lu.singleLogs)-1 != i {
+			sb.WriteString("\n")
+		}
 	}
 
 	return sb.String()
