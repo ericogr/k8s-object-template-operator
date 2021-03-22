@@ -1,10 +1,10 @@
 # K8S Object Template Operator [![CircleCI](https://circleci.com/gh/ericogr/k8s-object-template-operator.svg?style=svg)](https://circleci.com/gh/ericogr/k8s-object-template-operator)
-This operator can be used to create any kubernetes object dynamically. Build your templates and set parameters to create new k8s objects.
+This operator can be used to create any kubernetes object dynamically. Build your own templates using Kubernetes specs and set parameters to create new objects based on it.
 
 ## Use case
-Many kubernetes clusters are shared among many applications and teams. Sometimes services are available within the cluster scope and teams can use it to create or configure services using kubernetes spec (such as ConfigMap, Secret, PrometheusRule, ExternalDNS, etc.). Some of these specs are too complex or contains some configurations that we do not want to expose. You can automate it's creation using templates.
+Many kubernetes clusters are shared among many applications and teams. Sometimes services are available within the cluster scope and teams can use it to create or configure services using kubernetes spec (such as ConfigMap, Secret, PrometheusRule, ExternalDNS, etc.). Some of these specs are too complex or contains some configurations that we do not want to expose. You can automate it's creation using this operator.
 
-This operator can create kubernete objects based on templates and simple namespaced parameters. You can give permissions to user create parameters but hide templates and created objects from developers or users using the Kubernetes RBAC system.
+This operator can create kubernete objects based on templates specs and simple namespaced parameters. You can give permissions to user create parameters specs but forbit templates specs and created objects from developers or users using the Kubernetes RBAC system.
 
 # Installation
 Use the file [specs/object-template-operator.yaml](specs/object-template-operator.yaml) to start deploy this operator with all permissions (dev/test mode). For production, see section about roles bellow.
