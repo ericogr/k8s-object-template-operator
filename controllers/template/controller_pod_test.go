@@ -52,6 +52,12 @@ var _ = Describe("ObjectTemplateParams controller (POD)", func() {
 				},
 				Spec: otv1.ObjectTemplateSpec{
 					Description: "namespace-template",
+					Parameters: []otv1.Parameter{
+						{
+							Name:    "imageName",
+							Default: "latest",
+						},
+					},
 					Objects: []otv1.Object{
 						{
 							Kind: "Pod",

@@ -35,10 +35,17 @@ type Object struct {
 	TemplateBody string   `json:"templateBody"`
 }
 
+// Parameter defines a single parameter
+type Parameter struct {
+	Name    string `json:"name"`
+	Default string `json:"default"`
+}
+
 // ObjectTemplateSpec defines the desired state of ObjectTemplate
 type ObjectTemplateSpec struct {
-	Description string   `json:"description,omitempty"`
-	Objects     []Object `json:"objects"`
+	Description string      `json:"description,omitempty"`
+	Parameters  []Parameter `json:"parameters"`
+	Objects     []Object    `json:"objects"`
 }
 
 // ObjectTemplateStatus defines the observed state of ObjectTemplate

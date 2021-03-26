@@ -28,9 +28,10 @@ type Common struct {
 }
 
 // UpdateObjectsByTemplate update object
-func (c *Common) UpdateObjectsByTemplate(ot otv1.ObjectTemplate, owners []metav1.OwnerReference, namespaceName string, values map[string]string) error {
+func (c *Common) UpdateObjectsByTemplate(ot otv1.ObjectTemplate, owners []metav1.OwnerReference, namespaceName string, paramsValues map[string]string) error {
 	for _, obj := range ot.Spec.Objects {
-		err := c.UpdateSingleObjectByTemplate(obj, owners, namespaceName, values)
+		normParams := c.normalizeParametersValues(ot.Spec.Parameters, paramsValues)
+		err := c.UpdateSingleObjectByTemplate(obj, owners, namespaceName, normParams)
 
 		if err != nil {
 			return err
@@ -38,6 +39,19 @@ func (c *Common) UpdateObjectsByTemplate(ot otv1.ObjectTemplate, owners []metav1
 	}
 
 	return nil
+}
+
+func (c *Common) normalizeParametersValues(templateParamsValues []otv1.Parameter, paramsValues map[string]string) (params map[string]string) {
+	params = map[string]string{}
+	for _, tp := range templateParamsValues {
+		if len(paramsValues[tp.Name]) > 0 {
+			params[tp.Name] = paramsValues[tp.Name]
+		} else {
+			params[tp.Name] = tp.Default
+		}
+	}
+
+	return params
 }
 
 // UpdateSingleObjectByTemplate update object

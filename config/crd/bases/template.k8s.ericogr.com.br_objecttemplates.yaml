@@ -76,8 +76,22 @@ spec:
                 - templateBody
                 type: object
               type: array
+            parameters:
+              items:
+                description: Parameter defines a single parameter
+                properties:
+                  default:
+                    type: string
+                  name:
+                    type: string
+                required:
+                - default
+                - name
+                type: object
+              type: array
           required:
           - objects
+          - parameters
           type: object
         status:
           description: ObjectTemplateStatus defines the observed state of ObjectTemplate

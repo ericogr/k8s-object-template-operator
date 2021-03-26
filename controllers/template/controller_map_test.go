@@ -52,6 +52,20 @@ var _ = Describe("ObjectTemplateParams controller (ConfigMap)", func() {
 				},
 				Spec: otv1.ObjectTemplateSpec{
 					Description: "namespace-template",
+					Parameters: []otv1.Parameter{
+						{
+							Name:    "lives",
+							Default: "1",
+						},
+						{
+							Name:    "properties_file",
+							Default: "",
+						},
+						{
+							Name:    "character_name",
+							Default: "maria",
+						},
+					},
 					Objects: []otv1.Object{
 						{
 							Kind: "ConfigMap",
@@ -69,6 +83,7 @@ var _ = Describe("ObjectTemplateParams controller (ConfigMap)", func() {
 							Name:       NewObjectName,
 							TemplateBody: `data:
   player_initial_lives: "{{ .lives }}"
+  player_name: "{{ .character_name }}"
   ui_properties_file_name: "{{ .properties_file }}"`,
 						},
 					},
@@ -117,6 +132,7 @@ var _ = Describe("ObjectTemplateParams controller (ConfigMap)", func() {
 				return err == nil
 			}, timeout, interval).Should(BeTrue())
 			Expect(configmap.Data["player_initial_lives"]).Should(BeIdenticalTo("3"))
+			Expect(configmap.Data["player_name"]).Should(BeIdenticalTo("maria"))
 			Expect(configmap.Data["ui_properties_file_name"]).Should(BeIdenticalTo("user-interface.properties"))
 			Expect(configmap.ObjectMeta.Annotations["annotation1"]).Should(BeIdenticalTo("value_annotation1"))
 			Expect(configmap.ObjectMeta.Annotations["annotation2"]).Should(BeIdenticalTo("value_annotation2"))

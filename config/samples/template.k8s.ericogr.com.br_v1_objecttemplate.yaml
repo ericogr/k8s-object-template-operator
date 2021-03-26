@@ -5,6 +5,11 @@ metadata:
   name: objecttemplate-configmap-test
 spec:
   description: ConfigMap test
+  parameters:
+  - name: name
+  - name: age
+  - name: country
+    default: myCountry
   objects:
   - kind: ConfigMap
     apiVersion: v1
@@ -20,3 +25,4 @@ spec:
       data:
         name: '{{ .name }}'
         age: '{{ .age }}'
+        country: '{{ .country }}'
