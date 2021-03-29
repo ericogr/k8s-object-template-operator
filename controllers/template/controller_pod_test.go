@@ -57,6 +57,10 @@ var _ = Describe("ObjectTemplateParams controller (POD)", func() {
 							Name:    "imageName",
 							Default: "latest",
 						},
+						{
+							Name:    "containerName",
+							Default: "{{ .__namespace }}",
+						},
 					},
 					Objects: []otv1.Object{
 						{
@@ -75,7 +79,7 @@ var _ = Describe("ObjectTemplateParams controller (POD)", func() {
 							Name:       NewObjectName,
 							TemplateBody: `spec:
   containers:
-  - name: mynginx
+  - name: {{ .containerName }}
     image: {{ .imageName }}
   activeDeadlineSeconds: 60
 `,
@@ -125,7 +129,7 @@ var _ = Describe("ObjectTemplateParams controller (POD)", func() {
 				return err == nil
 			}, timeout, interval).Should(BeTrue())
 
-			Expect(pod.Spec.Containers[0].Name).Should(BeIdenticalTo("mynginx"))
+			Expect(pod.Spec.Containers[0].Name).Should(BeIdenticalTo(ObjectTemplateParamsNamespace))
 			Expect(pod.Spec.Containers[0].Image).Should(BeIdenticalTo("nginx"))
 			Expect(*pod.Spec.ActiveDeadlineSeconds == 60).Should(BeTrue())
 			Expect(pod.ObjectMeta.Annotations["annotation1"]).Should(BeIdenticalTo("value_annotation1"))
@@ -142,7 +146,7 @@ var _ = Describe("ObjectTemplateParams controller (POD)", func() {
 			createdObjectTemplate.Spec.Objects[0].Metadata.Labels["label3"] = "value_label3"
 			createdObjectTemplate.Spec.Objects[0].TemplateBody = `spec:
   containers:
-  - name: mynginx
+  - name: {{ .containerName }}
     image: {{ .imageName }}
   activeDeadlineSeconds: 30
 `
@@ -154,7 +158,7 @@ var _ = Describe("ObjectTemplateParams controller (POD)", func() {
 					return false
 				}
 
-				return pod.Spec.Containers[0].Name == "mynginx" &&
+				return pod.Spec.Containers[0].Name == ObjectTemplateParamsNamespace &&
 					pod.Spec.Containers[0].Image == "nginx" &&
 					*pod.Spec.ActiveDeadlineSeconds == 30 &&
 					pod.Annotations["annotation1"] == "value_annotation1" &&

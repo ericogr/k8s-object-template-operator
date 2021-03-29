@@ -18,7 +18,8 @@ import (
 )
 
 var (
-	otGV = otv1.GroupVersion.String()
+	otGV   = otv1.GroupVersion.String()
+	prefix = "__"
 )
 
 // Common common controllers things
@@ -28,10 +29,15 @@ type Common struct {
 }
 
 // UpdateObjectsByTemplate update object
-func (c *Common) UpdateObjectsByTemplate(ot otv1.ObjectTemplate, owners []metav1.OwnerReference, namespaceName string, paramsValues map[string]string) error {
+func (c *Common) UpdateObjectsByTemplate(ot otv1.ObjectTemplate, owners []metav1.OwnerReference, namespaceName string, paramsValues map[string]string) (err error) {
 	for _, obj := range ot.Spec.Objects {
-		normParams := c.normalizeParametersValues(ot.Spec.Parameters, paramsValues)
-		err := c.UpdateSingleObjectByTemplate(obj, owners, namespaceName, normParams)
+		normParams, err := c.normalizeParametersValues(obj, namespaceName, ot.Spec.Parameters, paramsValues)
+
+		if err != nil {
+			return err
+		}
+
+		err = c.UpdateSingleObjectByTemplate(obj, owners, namespaceName, normParams)
 
 		if err != nil {
 			return err
@@ -41,17 +47,28 @@ func (c *Common) UpdateObjectsByTemplate(ot otv1.ObjectTemplate, owners []metav1
 	return nil
 }
 
-func (c *Common) normalizeParametersValues(templateParamsValues []otv1.Parameter, paramsValues map[string]string) (params map[string]string) {
+func (c *Common) normalizeParametersValues(obj otv1.Object, namespaceName string, templateParamsValues []otv1.Parameter, paramsValues map[string]string) (params map[string]string, err error) {
+	templateValues := c.addRuntimeVariablesToMap(map[string]string{}, obj, namespaceName)
+
 	params = map[string]string{}
 	for _, tp := range templateParamsValues {
+		var pvalue string
 		if len(paramsValues[tp.Name]) > 0 {
-			params[tp.Name] = paramsValues[tp.Name]
+			pvalue = paramsValues[tp.Name]
 		} else {
-			params[tp.Name] = tp.Default
+			pvalue = tp.Default
 		}
+
+		templateExecuted, err := executeTemplate(pvalue, templateValues)
+
+		if err != nil {
+			return params, err
+		}
+
+		params[tp.Name] = templateExecuted
 	}
 
-	return params
+	return params, nil
 }
 
 // UpdateSingleObjectByTemplate update object
@@ -221,10 +238,10 @@ func (c *Common) UpdateStatus(ctx context.Context, obj runtime.Object) {
 func (c *Common) addRuntimeVariablesToMap(values map[string]string, obj otv1.Object, namespaceName string) map[string]string {
 	newMap := copyMap(values)
 
-	newMap["__namespace"] = namespaceName
-	newMap["__apiVersion"] = obj.APIVersion
-	newMap["__kind"] = obj.Kind
-	newMap["__name"] = obj.Name
+	newMap[prefix+"namespace"] = namespaceName
+	newMap[prefix+"apiVersion"] = obj.APIVersion
+	newMap[prefix+"kind"] = obj.Kind
+	newMap[prefix+"name"] = obj.Name
 
 	return newMap
 }

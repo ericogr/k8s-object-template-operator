@@ -53,12 +53,12 @@ func (r *ObjectTemplateReconciler) SetupWithManager(mgr ctrl.Manager) error {
 func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
 	log := r.Log.WithValues("objecttemplate", otGV)
-	var ot otv1.ObjectTemplate
-	err := r.Get(ctx, req.NamespacedName, &ot)
+	var objectTemplate otv1.ObjectTemplate
+	err := r.Get(ctx, req.NamespacedName, &objectTemplate)
 	common := Common{r.Client, log}
 
 	if err != nil {
-		ot.Status.Status = err.Error()
+		objectTemplate.Status.Status = err.Error()
 
 		if k8sErrors.IsNotFound(err) {
 			// Object not found, return. Created objects are automatically garbage collected
@@ -69,19 +69,19 @@ func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 		return ctrl.Result{}, err
 	}
 
-	defer common.UpdateStatus(ctx, &ot)
+	defer common.UpdateStatus(ctx, &objectTemplate)
 
-	otParams, err := common.FindObjectTemplateParamsByTemplateName(ot.Name)
+	otParams, err := common.FindObjectTemplateParamsByTemplateName(objectTemplate.Name)
 
 	if err != nil {
-		ot.Status.Status = err.Error()
+		objectTemplate.Status.Status = err.Error()
 		return ctrl.Result{}, err
 	}
 
 	lu := LogUtil{Log: log}
 	for _, otParam := range otParams {
 		paramNamespace := otParam.Namespace
-		paramValues, err := otParam.Spec.GetParametersByTemplateName(ot.Name)
+		paramValues, err := otParam.Spec.GetParametersByTemplateName(objectTemplate.Name)
 
 		if err != nil {
 			lu.Error(err, "Error getting parameters by template name")
@@ -92,15 +92,15 @@ func (r *ObjectTemplateReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 		gvk := otv1.GroupVersion.WithKind(kind)
 		controllerRef := metav1.NewControllerRef(otParam.GetObjectMeta(), gvk)
 
-		if err := common.UpdateObjectsByTemplate(ot, []metav1.OwnerReference{*controllerRef}, paramNamespace, paramValues.Values); err != nil {
+		if err := common.UpdateObjectsByTemplate(objectTemplate, []metav1.OwnerReference{*controllerRef}, paramNamespace, paramValues.Values); err != nil {
 			lu.Error(err, "Failed to update ObjectTemplate")
 			continue
 		}
 	}
 
-	ot.Status.Status = "OK"
+	objectTemplate.Status.Status = "OK"
 	if lu.HasError() {
-		ot.Status.Status = lu.AllErrorsMessages()
+		objectTemplate.Status.Status = lu.AllErrorsMessages()
 	}
 
 	return ctrl.Result{Requeue: false}, nil
