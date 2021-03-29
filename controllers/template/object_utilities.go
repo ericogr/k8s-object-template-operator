@@ -40,10 +40,14 @@ func getStringObject(apiVersion string, kind string, templateBody string) string
 
 func executeTemplate(templateYAML string, values map[string]string) (string, error) {
 	fmap := sprig.TxtFuncMap()
-	t := template.Must(template.New("template").Funcs(fmap).Parse(templateYAML))
+	compiledTemplate, err := template.New("template").Funcs(fmap).Parse(templateYAML)
+
+	if err != nil {
+		return "", err
+	}
 
 	sb := strings.Builder{}
-	err := t.Execute(&sb, values)
+	err = compiledTemplate.Execute(&sb, values)
 
 	if err != nil {
 		return "", err
