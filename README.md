@@ -101,6 +101,10 @@ metadata:
   name: objecttemplate-configmap-test
 spec:
   description: ConfigMap test
+  parameters:
+  - name: name
+    default: Maria
+  - name: age
   objects:
   - kind: ConfigMap
     apiVersion: v1
@@ -169,5 +173,5 @@ spec:
   - name: objecttemplate-configmap-test
     values:
       name: foo
-      age: '64'
+      age: '32'
  ```
