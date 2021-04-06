@@ -6,7 +6,7 @@ This operator can be used to create any kubernetes object dynamically. Build you
 ## Use case
 Many kubernetes clusters are shared among many applications and teams. Sometimes services are available within the cluster scope and teams can use it to create or configure services using kubernetes spec (such as ConfigMap, Secret, PrometheusRule, ExternalDNS, etc.). Some of these specs are too complex or contains some configurations that we do not want to expose. You can automate it's creation using this operator.
 
-This operator can create kubernete objects based on templates specs and simple namespaced parameters. You can give permissions to user create parameters specs but forbit templates specs and created objects from developers or users using the Kubernetes RBAC system.
+This operator can create kubernete objects based on templates specs and simple namespaced parameters. You can give permissions to user create parameters specs but forbid templates specs and created objects from developers or users using the default Kubernetes RBAC system.
 
 # Installation
 Use the file [specs/object-template-operator.yaml](specs/object-template-operator.yaml) to start deploy this operator with all permissions (dev/test mode). For production, see section about roles bellow.
@@ -84,12 +84,12 @@ rules:
 # New Custom Resource Definitions (CRD's)
 You have two new CRD's: [ObjectTemplate](config/crd/bases/template.k8s.ericogr.com.br_objecttemplates.yaml) and [ObjectTemplateParameters](config/crd/bases/template.k8s.ericogr.com.br_objecttemplateparams.yaml).
 
-**ObjectTemplate (cluster scope):** template used to create kubernetes objects at users namespaces (can be used by k8s admins)
+**ObjectTemplate (non namespaced):** template used to create kubernetes objects at users namespaces (can be used by k8s admins)
 
 **ObjectTemplateParameters (namespaced):** parameters used to create objects in their namespace (can be used by k8s users/devs)
 
 # Templates (ObjectTemplate)
-Use templates as a base to create kubernetes objects. Users can define your own parameters to create new objects.
+Use templates to scaffold kubernetes objects. Users can set your own parameters to create new objects based on pre confired templates.
 
 ## Template example
 
